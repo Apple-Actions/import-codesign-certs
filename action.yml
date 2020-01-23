@@ -1,10 +1,29 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Import Code-Signing Certificates'
+description: 'Imports a PKCS12 certificate and private key into a macOS Keychain.'
+author: 'Itty Bitty Apps Pty Ltd'
 inputs:
-  myInput:              # change this
-    description: 'input description here'
-    default: 'default value if applicable'
+  keychain:
+    description: 'The name of the keychain to import into.'
+    required: true
+    default: 'signing_temp'
+  create-keychain:
+    description: 'A boolean indicating whether to create the keychain.'
+    required: true
+    default: 'true'
+  keychain-password:
+    description: 'The password to use with the keychain. Gets auto-generated if keychain is "signing_temp".'
+    required: false
+  p12-filepath:
+    description: 'The path to the PKCS12 file to import.'
+    required: true
+  p12-password:
+    description: 'The password used to import the PKCS12 file.'
+    required: false
+outputs:
+  keychain-password:
+    description: 'The password for temporary keychain.'
+  security-response:
+    description: 'The output of the security commands.'
 runs:
   using: 'node12'
   main: 'dist/index.js'

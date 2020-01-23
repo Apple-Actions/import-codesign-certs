@@ -1,27 +1,17 @@
-import {wait} from '../src/wait'
-import * as process from 'process'
-import * as cp from 'child_process'
-import * as path from 'path'
+import * as security from '../src/security'
 
-test('throws invalid number', async () => {
-  const input = parseInt('foo', 10)
-  await expect(wait(input)).rejects.toThrow('milliseconds not a number')
-})
+test('imports p12 file', async () => {
+  const keychain: string = "signing_temp"
+  const keychainPassword: string = Math.random().toString(36)
+  const p12FilePath: string = "Certificates.p12"
+  const p12Password: string = "password"
 
-test('wait 500 ms', async () => {
-  const start = new Date()
-  await wait(500)
-  const end = new Date()
-  var delta = Math.abs(end.getTime() - start.getTime())
-  expect(delta).toBeGreaterThan(450)
-})
+  await security.installCertInTemporaryKeychain(
+    keychain,
+    true,
+    keychainPassword,
+    p12FilePath,
+    p12Password)
 
-// shows how the runner will run a javascript action with env / stdout protocol
-test('test runs', () => {
-  process.env['INPUT_MILLISECONDS'] = '500'
-  const ip = path.join(__dirname, '..', 'lib', 'main.js')
-  const options: cp.ExecSyncOptions = {
-    env: process.env
-  }
-  console.log(cp.execSync(`node ${ip}`, options).toString())
+  await security.deleteKeychain(keychain)
 })
