@@ -5,8 +5,8 @@
 ```yaml
 uses: apple-actions/import-codesign-certs@v1
 with: 
-  p12-filepath: 'path/to/certs.p12`
-  p12-password: ${{ secrets.P12_PASSWORD }}
+  p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
+  p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
 ```
 
 ## Additional Arguments
