@@ -2,7 +2,7 @@ import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import {ExecOptions} from '@actions/exec/lib/interfaces'
 
-export async function installCertInTemporaryKeychain(
+export async function installCertIntoTemporaryKeychain(
   keychain: string,
   setupKeychain: boolean,
   keychainPassword: string,
@@ -17,6 +17,19 @@ export async function installCertInTemporaryKeychain(
     }
   }
 
+  if (keychain.endsWith('.keychain')) {
+    throw new Error('keychain name should not end in .keychain')
+  }
+  if (p12FilePath === '') {
+    throw new Error('p12FilePath must not be empty')
+  }
+  if (p12Password === '') {
+    throw new Error('p12Password must not be empty')
+  }
+  if (keychainPassword === '') {
+    throw new Error('keychainPassword must not be empty')
+  }
+
   const tempKeychain = `${keychain}.keychain`
   if (setupKeychain) {
     await createKeychain(tempKeychain, keychainPassword, options)
@@ -24,7 +37,6 @@ export async function installCertInTemporaryKeychain(
   await unlockKeychain(tempKeychain, keychainPassword, options)
   await importPkcs12(tempKeychain, p12FilePath, p12Password, options)
 
-  core.debug(output)
   core.setOutput('security-response', output)
 }
 
@@ -37,6 +49,10 @@ export async function deleteKeychain(
   keychain: string,
   options?: ExecOptions
 ): Promise<void> {
+  if (keychain.endsWith('.keychain')) {
+    throw new Error('keychain name should not end in .keychain')
+  }
+
   await exec.exec(
     'security',
     ['delete-keychain', `${keychain}.keychain`],
@@ -75,15 +91,27 @@ async function importPkcs12(
   await exec.exec('security', importArgs, options)
 }
 
+/**
+ * Unlock the specified Keychain
+ * @param keychain The keychain to unlock
+ * @param password THe password to unlock with
+ * @param options Execution options (optional)
+ */
 async function unlockKeychain(
   keychain: string,
   password: string,
-  options: ExecOptions
+  options?: ExecOptions
 ): Promise<void> {
   const args: string[] = ['unlock-keychain', '-p', password, keychain]
   await exec.exec('security', args, options)
 }
 
+/**
+ * Creat a keychain with the specified name
+ * @param keychain The keychain to create; The name should end with .keychain.
+ * @param password THe password to unlock with.
+ * @param options Execution options (optional)
+ */
 async function createKeychain(
   keychain: string,
   password: string,

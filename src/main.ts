@@ -11,7 +11,7 @@ async function run(): Promise<void> {
     const keychain: string = core.getInput('keychain')
     const createKeychain: boolean = core.getInput('create-keychain') === 'true'
     let keychainPassword: string = core.getInput('keychain-password')
-    const p12File: string = core.getInput('p12-file')
+    const p12Filepath: string = core.getInput('p12-filepath')
     const p12Password: string = core.getInput('p12-password')
 
     if (keychainPassword === '') {
@@ -22,11 +22,11 @@ async function run(): Promise<void> {
     core.setOutput('keychain-password', keychainPassword)
     core.setSecret(keychainPassword)
 
-    await security.installCertInTemporaryKeychain(
+    await security.installCertIntoTemporaryKeychain(
       keychain,
       createKeychain,
       keychainPassword,
-      p12File,
+      p12Filepath,
       p12Password
     )
   } catch (error) {

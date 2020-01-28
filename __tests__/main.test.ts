@@ -6,7 +6,7 @@ test('imports p12 file', async () => {
   const p12FilePath: string = "Certificates.p12"
   const p12Password: string = "password"
 
-  await security.installCertInTemporaryKeychain(
+  await security.installCertIntoTemporaryKeychain(
     keychain,
     true,
     keychainPassword,
