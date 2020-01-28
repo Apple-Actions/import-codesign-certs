@@ -15,10 +15,13 @@ inputs:
     required: false
   p12-filepath:
     description: 'The path to the PKCS12 file to import.'
-    required: true
+    required: false
+  p12-file-base64:
+    description: 'The certificates in a PKCS12 file encoded as a base64 string.'
+    required: false
   p12-password:
     description: 'The password used to import the PKCS12 file.'
-    required: false
+    required: true
 outputs:
   keychain-password:
     description: 'The password for temporary keychain.'
