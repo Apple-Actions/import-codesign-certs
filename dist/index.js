@@ -3089,10 +3089,10 @@ function run() {
                 throw new Error('At least one of p12-filepath or p12-file-base64 must be provided');
             }
             if (p12FileBase64 !== '') {
-                const buffer = new Buffer(p12FileBase64, 'base64');
+                const buffer = Buffer.from(p12FileBase64, 'base64');
                 const tempFile = tmp.fileSync();
                 p12Filepath = tempFile.name;
-                fs.writeFileSync(p12Filepath, buffer.toString('utf-8'));
+                fs.writeFileSync(p12Filepath, buffer);
             }
             if (keychainPassword === '') {
                 // generate a keychain password for the temporary keychain
