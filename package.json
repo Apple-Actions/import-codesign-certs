@@ -1,8 +1,8 @@
 {
-  "name": "typescript-action",
-  "version": "0.0.0",
+  "name": "import-codesign-certs",
+  "version": "1.0.3",
   "private": true,
-  "description": "TypeScript template action",
+  "description": "GitHub Action for Importing Code-signing Certificates into a Keychain",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
@@ -15,18 +15,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
+    "url": "git+https://github.com/Apple-Actions/import-codesign-certs.git"
   },
   "keywords": [
     "actions",
     "node",
     "setup"
   ],
-  "author": "YourNameOrOrganization",
+  "author": "Itty Bitty Apps Ptr Ltd",
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.2.0",
-    "@actions/exec": "latest",
+    "@actions/exec": "^1.0.3",
     "tmp": "^0.1.0"
   },
   "devDependencies": {
