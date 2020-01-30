@@ -3163,13 +3163,32 @@ function installCertIntoTemporaryKeychain(keychain, setupKeychain, keychainPassw
         }
         yield unlockKeychain(tempKeychain, keychainPassword, options);
         yield importPkcs12(tempKeychain, p12FilePath, p12Password, options);
+        yield updateKeychainList(tempKeychain, options);
         core.setOutput('security-response', output);
     });
 }
 exports.installCertIntoTemporaryKeychain = installCertIntoTemporaryKeychain;
 /**
+ * Update the keychains list.
+ * @param keychain The name of the keychain to include in list.
+ * @param options Execution options (optional)
+ */
+function updateKeychainList(keychain, options) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const args = [
+            'list-keychains',
+            '-d',
+            'user',
+            '-s',
+            keychain,
+            'login.keychain'
+        ];
+        yield exec.exec('security', args, options);
+    });
+}
+/**
  * Delete the specified keychain
- * @param keychain
+ * @param keychain The name of the keychain to delete.
  * @param options Execution options (optional)
  */
 function deleteKeychain(keychain, options) {
