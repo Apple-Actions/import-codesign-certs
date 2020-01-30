@@ -36,13 +36,35 @@ export async function installCertIntoTemporaryKeychain(
   }
   await unlockKeychain(tempKeychain, keychainPassword, options)
   await importPkcs12(tempKeychain, p12FilePath, p12Password, options)
+  await updateKeychainList(tempKeychain, options)
 
   core.setOutput('security-response', output)
 }
 
 /**
+ * Update the keychains list.
+ * @param keychain The name of the keychain to include in list.
+ * @param options Execution options (optional)
+ */
+async function updateKeychainList(
+  keychain: string,
+  options?: ExecOptions
+): Promise<void> {
+  const args: string[] = [
+    'list-keychains',
+    '-d',
+    'user',
+    '-s',
+    keychain,
+    'login.keychain'
+  ]
+
+  await exec.exec('security', args, options)
+}
+
+/**
  * Delete the specified keychain
- * @param keychain
+ * @param keychain The name of the keychain to delete.
  * @param options Execution options (optional)
  */
 export async function deleteKeychain(
