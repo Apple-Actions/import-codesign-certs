@@ -36,6 +36,7 @@ export async function installCertIntoTemporaryKeychain(
   }
   await unlockKeychain(tempKeychain, keychainPassword, options)
   await importPkcs12(tempKeychain, p12FilePath, p12Password, options)
+  await setPartitionList(tempKeychain, keychainPassword)
   await updateKeychainList(tempKeychain, options)
 
   core.setOutput('security-response', output)
@@ -106,11 +107,37 @@ async function importPkcs12(
     // This would be insecure if the keychain was retained but GitHub action
     // VMs are thrown away after use.
     '-A',
+    '-T',
+    '/usr/bin/codesign',
+    '-T',
+    '/usr/bin/security',
     '-P',
     p12Password
   ]
 
   await exec.exec('security', importArgs, options)
+}
+
+/**
+ * Sets the partition list for the specified keychain.
+ * @param keychain The keychain to update.
+ * @param password The keychain password.
+ * @param options Execution options (optional)
+ */
+async function setPartitionList(
+  keychain: string,
+  password: string,
+  options?: ExecOptions
+): Promise<void> {
+  const args: string[] = [
+    'set-key-partition-list',
+    '-S',
+    'apple-tool:,apple:',
+    '-k',
+    password,
+    keychain
+  ]
+  await exec.exec('security', args, options)
 }
 
 /**
