@@ -3163,6 +3163,7 @@ function installCertIntoTemporaryKeychain(keychain, setupKeychain, keychainPassw
         }
         yield unlockKeychain(tempKeychain, keychainPassword, options);
         yield importPkcs12(tempKeychain, p12FilePath, p12Password, options);
+        yield setPartitionList(tempKeychain, keychainPassword);
         yield updateKeychainList(tempKeychain, options);
         core.setOutput('security-response', output);
     });
@@ -3220,10 +3221,33 @@ function importPkcs12(keychain, p12FilePath, p12Password, options) {
             // This would be insecure if the keychain was retained but GitHub action
             // VMs are thrown away after use.
             '-A',
+            '-T',
+            '/usr/bin/codesign',
+            '-T',
+            '/usr/bin/security',
             '-P',
             p12Password
         ];
         yield exec.exec('security', importArgs, options);
+    });
+}
+/**
+ * Sets the partition list for the specified keychain.
+ * @param keychain The keychain to update.
+ * @param password The keychain password.
+ * @param options Execution options (optional)
+ */
+function setPartitionList(keychain, password, options) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const args = [
+            'set-key-partition-list',
+            '-S',
+            'apple-tool:,apple:',
+            '-k',
+            password,
+            keychain
+        ];
+        yield exec.exec('security', args, options);
     });
 }
 /**
