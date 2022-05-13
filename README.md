@@ -3,6 +3,19 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat)](LICENSE)
 [![PRs welcome!](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
+## Getting Started
+
+First, generate your signing certificates in the XCode preferences. Click on the Accounts tab, select your user account and click Manage Certificates. Click the plus button and add the relevant certificates for the type of app you are developing.
+
+Next, create a .p12 file that combines your certificate and private key using [these instructions](https://calvium.com/how-to-make-a-p12-file/). 
+
+Copy the .p12 format in base64:
+
+```
+base64 CertificateFile.p12 | pbcopy
+```
+
+Paste the output of the above command into a secret called `CERTIFICATES_P12` and the password into `CERTIFICATES_P12_PASSWORD` into the GitHub Actions Secrets in the GitHub settings.
 ## Usage:
 
 ```yaml
@@ -11,6 +24,10 @@ with:
   p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
   p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
 ```
+
+## Multiple Certificates
+
+If you need to add multiple certificates, repeat the steps above for each certificate and add duplicate action runs for each certificate.
 
 ## Additional Arguments
 
