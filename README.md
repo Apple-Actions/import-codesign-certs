@@ -7,7 +7,7 @@
 
 First, generate your signing certificates in the XCode preferences. Click on the Accounts tab, select your user account and click Manage Certificates. Click the plus button and add the relevant certificates for the type of app you are developing.
 
-Next, create a .p12 file that combines your certificate and private key using [these instructions](https://calvium.com/how-to-make-a-p12-file/). 
+Next, create a .p12 file that combines all of your certificates and private keys using [these instructions](https://calvium.com/how-to-make-a-p12-file/). 
 
 Copy the .p12 format in base64:
 
@@ -27,7 +27,7 @@ with:
 
 ## Multiple Certificates
 
-If you need to add multiple certificates, repeat the steps above for each certificate and add duplicate action runs for each certificate.
+If you need to add multiple certificates, select them all in the keychain when creating your p12 file. You do not need multiple separate steps.
 
 ## Additional Arguments
 
