@@ -20,7 +20,10 @@ See [action.yml](action.yml) for more details.
 
 1. Generate a CSR on your machine, either
    - using the macos "Keychain Access" tool 
-   - or using openssl `openssl req -new -newkey rsa:2048 -nodes -keyout app.key -out app.csr`
+   - or using openssl
+     ```sh
+     openssl req -new -newkey rsa:2048 -nodes -keyout app.key -out app.csr
+     ```
 3. Sign your `app.csr` on [Apple Developer](https://developer.apple.com/account/resources/certificates/add)
 4. Download the resulting `certificate.cer`
 5. Create a `p12` file, you will be asked to set a password
