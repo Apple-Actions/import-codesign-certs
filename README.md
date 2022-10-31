@@ -5,7 +5,7 @@
 
 ## Getting Started
 
-First, generate your signing certificates in the XCode preferences. Click on the Accounts tab, select your user account and click Manage Certificates. Click the plus button and add the relevant certificates for the type of app you are developing.
+First, generate your signing certificates in the Xcode preferences. Click on the Accounts tab, select your user account and click Manage Certificates. Click the plus button and add the relevant certificates for the type of app you are developing.
 
 Next, create a .p12 file that combines all of your certificates and private keys using [these instructions](https://calvium.com/how-to-make-a-p12-file/). 
 
