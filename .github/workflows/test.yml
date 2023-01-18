@@ -10,7 +10,7 @@ jobs:
   build: # make sure build/ci work properly
     runs-on: macOS-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
     - run: |
         npm install
         npm run all
