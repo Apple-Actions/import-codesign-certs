@@ -6,7 +6,7 @@
 ## Usage:
 
 ```yaml
-uses: apple-actions/import-codesign-certs@v1
+uses: apple-actions/import-codesign-certs@v2
 with: 
   p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
   p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
