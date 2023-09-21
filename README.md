@@ -11,13 +11,13 @@ Next, create a .p12 file that combines all of your certificates and private keys
 
 Copy the .p12 format in base64:
 
-```
+```sh
 base64 CertificateFile.p12 | pbcopy
 ```
 
 Paste the output of the above command into a secret called `CERTIFICATES_P12` and the password into `CERTIFICATES_P12_PASSWORD` into the GitHub Actions Secrets in the GitHub settings.
 
-## Usage:
+## Usage
 
 ```yaml
 uses: apple-actions/import-codesign-certs@v2
@@ -26,7 +26,7 @@ with:
   p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
 ```
 
-## Multiple Certificates
+## Multiple Certificates
 
 If you need to add multiple certificates, select them all in the keychain when creating your p12 file. You do not need multiple separate steps.
 
