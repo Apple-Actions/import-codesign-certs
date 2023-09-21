@@ -46,7 +46,11 @@ async function run(): Promise<void> {
       p12Password
     )
   } catch (error) {
-    core.setFailed(error.message)
+    if (error instanceof Error) {
+      core.setFailed(error.message)
+    } else {
+      core.setFailed(`Action failed with error ${error}`)
+    }
   }
 }
 
