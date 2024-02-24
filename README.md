@@ -12,7 +12,7 @@ Next, create a .p12 file that combines all of your certificates and private keys
 Copy the .p12 format in base64:
 
 ```sh
-base64 CertificateFile.p12 | pbcopy
+base64 -i CertificateFile.p12 | pbcopy
 ```
 
 Paste the output of the above command into a secret called `CERTIFICATES_P12` and the password into `CERTIFICATES_P12_PASSWORD` into the GitHub Actions Secrets in the GitHub settings.
