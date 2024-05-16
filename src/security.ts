@@ -111,6 +111,8 @@ async function importPkcs12(
     '/usr/bin/codesign',
     '-T',
     '/usr/bin/security',
+    '-T',
+    '/usr/bin/productbuild',
     '-P',
     p12Password
   ]
