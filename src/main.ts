@@ -16,6 +16,8 @@ async function run(): Promise<void> {
     let p12Filepath: string = core.getInput('p12-filepath')
     const p12FileBase64: string = core.getInput('p12-file-base64')
     const p12Password: string = core.getInput('p12-password')
+    const deleteKeychainIfExists: boolean =
+      core.getInput('delete-keychain-if-exists') === 'true'
 
     if (p12Filepath === '' && p12FileBase64 === '') {
       throw new Error(
@@ -37,6 +39,14 @@ async function run(): Promise<void> {
 
     core.setOutput('keychain-password', keychainPassword)
     core.setSecret(keychainPassword)
+
+    if (deleteKeychainIfExists) {
+      try {
+        await security.deleteKeychain(keychain)
+      } catch (error) {
+        core.warning(`Failed to delete keychain: ${error}`)
+      }
+    }
 
     await security.installCertIntoTemporaryKeychain(
       keychain,
