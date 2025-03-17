@@ -22,6 +22,10 @@ inputs:
   p12-password:
     description: 'The password used to import the PKCS12 file.'
     required: true
+  delete-keychain-if-exists:
+    description: 'A boolean indicating whether to delete the keychain if it already exists. May need this on self-hosted runners.'
+    required: false
+    default: 'false'
 outputs:
   keychain-password:
     description: 'The password for temporary keychain.'
