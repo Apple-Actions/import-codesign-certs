@@ -1,8 +1,8 @@
-import { getInput, setFailed, setOutput, setSecret, warning } from '@actions/core'
-import { platform } from 'os'
-import { writeFileSync } from 'fs'
-import { fileSync } from 'tmp'
-import { deleteKeychain, installCertIntoTemporaryKeychain } from './security'
+import {getInput, setFailed, setOutput, setSecret, warning} from '@actions/core'
+import {platform} from 'os'
+import {writeFileSync} from 'fs'
+import {fileSync} from 'tmp'
+import {deleteKeychain, installCertIntoTemporaryKeychain} from './security'
 
 async function run(): Promise<void> {
   try {

@@ -1,6 +1,6 @@
-import { setOutput } from '@actions/core'
-import { exec } from '@actions/exec'
-import { ExecOptions } from '@actions/exec/lib/interfaces'
+import {setOutput} from '@actions/core'
+import {exec} from '@actions/exec'
+import {ExecOptions} from '@actions/exec/lib/interfaces'
 
 export async function installCertIntoTemporaryKeychain(
   keychain: string,
@@ -76,11 +76,7 @@ export async function deleteKeychain(
     throw new Error('keychain name should not end in .keychain')
   }
 
-  await exec(
-    'security',
-    ['delete-keychain', `${keychain}.keychain`],
-    options
-  )
+  await exec('security', ['delete-keychain', `${keychain}.keychain`], options)
 }
 
 /**
