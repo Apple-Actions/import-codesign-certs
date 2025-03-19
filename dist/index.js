@@ -1,123 +1,15 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 109:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core = __importStar(__nccwpck_require__(186));
-const os = __importStar(__nccwpck_require__(37));
-const fs = __importStar(__nccwpck_require__(147));
-const tmp = __importStar(__nccwpck_require__(517));
-const security = __importStar(__nccwpck_require__(546));
-async function run() {
-    try {
-        if (os.platform() !== 'darwin') {
-            throw new Error('Action requires macOS agent.');
-        }
-        const keychain = core.getInput('keychain');
-        const createKeychain = core.getInput('create-keychain') === 'true';
-        let keychainPassword = core.getInput('keychain-password');
-        let p12Filepath = core.getInput('p12-filepath');
-        const p12FileBase64 = core.getInput('p12-file-base64');
-        const p12Password = core.getInput('p12-password');
-        const deleteKeychainIfExists = core.getInput('delete-keychain-if-exists') === 'true';
-        if (p12Filepath === '' && p12FileBase64 === '') {
-            throw new Error('At least one of p12-filepath or p12-file-base64 must be provided');
-        }
-        if (p12FileBase64 !== '') {
-            const buffer = Buffer.from(p12FileBase64, 'base64');
-            const tempFile = tmp.fileSync();
-            p12Filepath = tempFile.name;
-            fs.writeFileSync(p12Filepath, buffer);
-        }
-        if (keychainPassword === '') {
-            // generate a keychain password for the temporary keychain
-            keychainPassword = Math.random().toString(36);
-        }
-        core.setOutput('keychain-password', keychainPassword);
-        core.setSecret(keychainPassword);
-        if (deleteKeychainIfExists) {
-            try {
-                await security.deleteKeychain(keychain);
-            }
-            catch (error) {
-                core.warning(`Failed to delete keychain: ${error}`);
-            }
-        }
-        await security.installCertIntoTemporaryKeychain(keychain, createKeychain, keychainPassword, p12Filepath, p12Password);
-    }
-    catch (error) {
-        if (error instanceof Error) {
-            core.setFailed(error.message);
-        }
-        else {
-            core.setFailed(`Action failed with error ${error}`);
-        }
-    }
-}
-run();
-
-
-/***/ }),
-
 /***/ 546:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.deleteKeychain = exports.installCertIntoTemporaryKeychain = void 0;
-const core = __importStar(__nccwpck_require__(186));
-const exec = __importStar(__nccwpck_require__(514));
+const core_1 = __nccwpck_require__(186);
+const exec_1 = __nccwpck_require__(514);
 async function installCertIntoTemporaryKeychain(keychain, setupKeychain, keychainPassword, p12FilePath, p12Password) {
     let output = '';
     const options = {};
@@ -146,7 +38,7 @@ async function installCertIntoTemporaryKeychain(keychain, setupKeychain, keychai
     await importPkcs12(tempKeychain, p12FilePath, p12Password, options);
     await setPartitionList(tempKeychain, keychainPassword);
     await updateKeychainList(tempKeychain, options);
-    core.setOutput('security-response', output);
+    (0, core_1.setOutput)('security-response', output);
 }
 exports.installCertIntoTemporaryKeychain = installCertIntoTemporaryKeychain;
 /**
@@ -163,7 +55,7 @@ async function updateKeychainList(keychain, options) {
         keychain,
         'login.keychain'
     ];
-    await exec.exec('security', args, options);
+    await (0, exec_1.exec)('security', args, options);
 }
 /**
  * Delete the specified keychain
@@ -174,7 +66,7 @@ async function deleteKeychain(keychain, options) {
     if (keychain.endsWith('.keychain')) {
         throw new Error('keychain name should not end in .keychain');
     }
-    await exec.exec('security', ['delete-keychain', `${keychain}.keychain`], options);
+    await (0, exec_1.exec)('security', ['delete-keychain', `${keychain}.keychain`], options);
 }
 exports.deleteKeychain = deleteKeychain;
 /**
@@ -203,7 +95,7 @@ async function importPkcs12(keychain, p12FilePath, p12Password, options) {
         '-P',
         p12Password
     ];
-    await exec.exec('security', importArgs, options);
+    await (0, exec_1.exec)('security', importArgs, options);
 }
 /**
  * Sets the partition list for the specified keychain.
@@ -220,7 +112,7 @@ async function setPartitionList(keychain, password, options) {
         password,
         keychain
     ];
-    await exec.exec('security', args, options);
+    await (0, exec_1.exec)('security', args, options);
 }
 /**
  * Unlock the specified Keychain
@@ -230,7 +122,7 @@ async function setPartitionList(keychain, password, options) {
  */
 async function unlockKeychain(keychain, password, options) {
     const args = ['unlock-keychain', '-p', password, keychain];
-    await exec.exec('security', args, options);
+    await (0, exec_1.exec)('security', args, options);
 }
 /**
  * Creat a keychain with the specified name
@@ -240,7 +132,7 @@ async function unlockKeychain(keychain, password, options) {
  */
 async function createKeychain(keychain, password, options) {
     const createArgs = ['create-keychain', '-p', password, keychain];
-    await exec.exec('security', createArgs, options);
+    await (0, exec_1.exec)('security', createArgs, options);
     // Set automatic keychain lock timeout to 6 hours.
     const setSettingsArgs = [
         'set-keychain-settings',
@@ -248,7 +140,7 @@ async function createKeychain(keychain, password, options) {
         '21600',
         keychain
     ];
-    await exec.exec('security', setSettingsArgs, options);
+    await (0, exec_1.exec)('security', setSettingsArgs, options);
 }
 
 
@@ -5147,12 +5039,68 @@ module.exports = require("util");
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __nccwpck_require__(109);
-/******/ 	module.exports = __webpack_exports__;
-/******/ 	
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
+"use strict";
+var exports = __webpack_exports__;
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const core_1 = __nccwpck_require__(186);
+const os_1 = __nccwpck_require__(37);
+const fs_1 = __nccwpck_require__(147);
+const tmp_1 = __nccwpck_require__(517);
+const security_1 = __nccwpck_require__(546);
+async function run() {
+    try {
+        if ((0, os_1.platform)() !== 'darwin') {
+            throw new Error('Action requires macOS agent.');
+        }
+        const keychain = (0, core_1.getInput)('keychain');
+        const createKeychain = (0, core_1.getInput)('create-keychain') === 'true';
+        let keychainPassword = (0, core_1.getInput)('keychain-password');
+        let p12Filepath = (0, core_1.getInput)('p12-filepath');
+        const p12FileBase64 = (0, core_1.getInput)('p12-file-base64');
+        const p12Password = (0, core_1.getInput)('p12-password');
+        const deleteKeychainIfExists = (0, core_1.getInput)('delete-keychain-if-exists') === 'true';
+        if (p12Filepath === '' && p12FileBase64 === '') {
+            throw new Error('At least one of p12-filepath or p12-file-base64 must be provided');
+        }
+        if (p12FileBase64 !== '') {
+            const buffer = Buffer.from(p12FileBase64, 'base64');
+            const tempFile = (0, tmp_1.fileSync)();
+            p12Filepath = tempFile.name;
+            (0, fs_1.writeFileSync)(p12Filepath, buffer);
+        }
+        if (keychainPassword === '') {
+            // generate a keychain password for the temporary keychain
+            keychainPassword = Math.random().toString(36);
+        }
+        (0, core_1.setOutput)('keychain-password', keychainPassword);
+        (0, core_1.setSecret)(keychainPassword);
+        if (deleteKeychainIfExists) {
+            try {
+                await (0, security_1.deleteKeychain)(keychain);
+            }
+            catch (error) {
+                (0, core_1.warning)(`Failed to delete keychain: ${error}`);
+            }
+        }
+        await (0, security_1.installCertIntoTemporaryKeychain)(keychain, createKeychain, keychainPassword, p12Filepath, p12Password);
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            (0, core_1.setFailed)(error.message);
+        }
+        else {
+            (0, core_1.setFailed)(`Action failed with error ${error}`);
+        }
+    }
+}
+run();
+
+})();
+
+module.exports = __webpack_exports__;
 /******/ })()
 ;
