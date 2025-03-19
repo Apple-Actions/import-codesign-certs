@@ -46,6 +46,7 @@ async function run() {
         let p12Filepath = core.getInput('p12-filepath');
         const p12FileBase64 = core.getInput('p12-file-base64');
         const p12Password = core.getInput('p12-password');
+        const deleteKeychainIfExists = core.getInput('delete-keychain-if-exists') === 'true';
         if (p12Filepath === '' && p12FileBase64 === '') {
             throw new Error('At least one of p12-filepath or p12-file-base64 must be provided');
         }
@@ -61,6 +62,14 @@ async function run() {
         }
         core.setOutput('keychain-password', keychainPassword);
         core.setSecret(keychainPassword);
+        if (deleteKeychainIfExists) {
+            try {
+                await security.deleteKeychain(keychain);
+            }
+            catch (error) {
+                core.warning(`Failed to delete keychain: ${error}`);
+            }
+        }
         await security.installCertIntoTemporaryKeychain(keychain, createKeychain, keychainPassword, p12Filepath, p12Password);
     }
     catch (error) {
