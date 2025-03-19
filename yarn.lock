@@ -2,15 +2,15 @@
 # yarn lockfile v1
 
 
-"@actions/core@~1.10.0":
-  version "1.10.1"
-  resolved "https://registry.yarnpkg.com/@actions/core/-/core-1.10.1.tgz#61108e7ac40acae95ee36da074fa5850ca4ced8a"
-  integrity sha512-3lBR9EDAY+iYIpTnTIXmWcNbX3T2kCkAEQGIQx4NVQ0575nk2k3GRZDTPQG+vVtS2izSLmINlxXf0uLtnrTP+g==
+"@actions/core@~1.11.0":
+  version "1.11.1"
+  resolved "https://registry.yarnpkg.com/@actions/core/-/core-1.11.1.tgz#ae683aac5112438021588030efb53b1adb86f172"
+  integrity sha512-hXJCSrkwfA46Vd9Z3q4cpEpHB1rL5NG04+/rbqW9d3+CSvtB1tYe8UTpAlixa1vj0m/ULglfEK2UKxMGxCxv5A==
   dependencies:
+    "@actions/exec" "^1.1.1"
     "@actions/http-client" "^2.0.1"
-    uuid "^8.3.2"
 
-"@actions/exec@~1.1.0":
+"@actions/exec@^1.1.1", "@actions/exec@~1.1.0":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@actions/exec/-/exec-1.1.1.tgz#2e43f28c54022537172819a7cf886c844221a611"
   integrity sha512-+sCcHHbVdk93a0XT19ECtO/gIXoxvdsgQLzb2fE2/5sIZmWQuluYyjPQtrtTHdU1YzTZ7bAPN4sITq2xi1679w==
@@ -2046,10 +2046,10 @@ typescript-eslint@^8.14.0:
     "@typescript-eslint/parser" "8.26.1"
     "@typescript-eslint/utils" "8.26.1"
 
-typescript@~5.4.0:
-  version "5.4.5"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.4.5.tgz#42ccef2c571fdbd0f6718b1d1f5e6e5ef006f611"
-  integrity sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==
+typescript@~5.8.0:
+  version "5.8.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.8.2.tgz#8170b3702f74b79db2e5a96207c15e65807999e4"
+  integrity sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ==
 
 unbox-primitive@^1.1.0:
   version "1.1.0"
@@ -2087,11 +2087,6 @@ uri-js@^4.2.2:
   integrity sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==
   dependencies:
     punycode "^2.1.0"
-
-uuid@^8.3.2:
-  version "8.3.2"
-  resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
-  integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
 which-boxed-primitive@^1.1.0, which-boxed-primitive@^1.1.1:
   version "1.1.1"
