@@ -5,7 +5,7 @@
   "description": "GitHub Action for Importing Code-signing Certificates into a Keychain",
   "main": "lib/main.js",
   "engines": {
-    "node": ">=20"
+    "node": "20"
   },
   "scripts": {
     "build": "tsc",
