@@ -7,7 +7,8 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.deleteKeychain = exports.installCertIntoTemporaryKeychain = void 0;
+exports.installCertIntoTemporaryKeychain = installCertIntoTemporaryKeychain;
+exports.deleteKeychain = deleteKeychain;
 const core_1 = __nccwpck_require__(7484);
 const exec_1 = __nccwpck_require__(5236);
 async function installCertIntoTemporaryKeychain(keychain, setupKeychain, keychainPassword, p12FilePath, p12Password) {
@@ -40,7 +41,6 @@ async function installCertIntoTemporaryKeychain(keychain, setupKeychain, keychai
     await updateKeychainList(tempKeychain, options);
     (0, core_1.setOutput)('security-response', output);
 }
-exports.installCertIntoTemporaryKeychain = installCertIntoTemporaryKeychain;
 /**
  * Update the keychains list.
  * @param keychain The name of the keychain to include in list.
@@ -68,7 +68,6 @@ async function deleteKeychain(keychain, options) {
     }
     await (0, exec_1.exec)('security', ['delete-keychain', `${keychain}.keychain`], options);
 }
-exports.deleteKeychain = deleteKeychain;
 /**
  * Import a PKCS12 file into the keychain
  * @param keychain The name of the keychain to import the P12 file into.
