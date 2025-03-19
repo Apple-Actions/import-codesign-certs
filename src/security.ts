@@ -1,6 +1,6 @@
-import * as core from '@actions/core'
-import * as exec from '@actions/exec'
-import {ExecOptions} from '@actions/exec/lib/interfaces'
+import { setOutput } from '@actions/core'
+import { exec } from '@actions/exec'
+import { ExecOptions } from '@actions/exec/lib/interfaces'
 
 export async function installCertIntoTemporaryKeychain(
   keychain: string,
@@ -39,7 +39,7 @@ export async function installCertIntoTemporaryKeychain(
   await setPartitionList(tempKeychain, keychainPassword)
   await updateKeychainList(tempKeychain, options)
 
-  core.setOutput('security-response', output)
+  setOutput('security-response', output)
 }
 
 /**
@@ -60,7 +60,7 @@ async function updateKeychainList(
     'login.keychain'
   ]
 
-  await exec.exec('security', args, options)
+  await exec('security', args, options)
 }
 
 /**
@@ -76,7 +76,7 @@ export async function deleteKeychain(
     throw new Error('keychain name should not end in .keychain')
   }
 
-  await exec.exec(
+  await exec(
     'security',
     ['delete-keychain', `${keychain}.keychain`],
     options
@@ -115,7 +115,7 @@ async function importPkcs12(
     p12Password
   ]
 
-  await exec.exec('security', importArgs, options)
+  await exec('security', importArgs, options)
 }
 
 /**
@@ -137,7 +137,7 @@ async function setPartitionList(
     password,
     keychain
   ]
-  await exec.exec('security', args, options)
+  await exec('security', args, options)
 }
 
 /**
@@ -152,7 +152,7 @@ async function unlockKeychain(
   options?: ExecOptions
 ): Promise<void> {
   const args: string[] = ['unlock-keychain', '-p', password, keychain]
-  await exec.exec('security', args, options)
+  await exec('security', args, options)
 }
 
 /**
@@ -167,7 +167,7 @@ async function createKeychain(
   options: ExecOptions
 ): Promise<void> {
   const createArgs: string[] = ['create-keychain', '-p', password, keychain]
-  await exec.exec('security', createArgs, options)
+  await exec('security', createArgs, options)
 
   // Set automatic keychain lock timeout to 6 hours.
   const setSettingsArgs: string[] = [
@@ -176,5 +176,5 @@ async function createKeychain(
     '21600',
     keychain
   ]
-  await exec.exec('security', setSettingsArgs, options)
+  await exec('security', setSettingsArgs, options)
 }

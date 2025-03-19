@@ -1,23 +1,23 @@
-import * as core from '@actions/core'
-import * as os from 'os'
-import * as fs from 'fs'
-import * as tmp from 'tmp'
-import * as security from './security'
+import { getInput, setFailed, setOutput, setSecret, warning } from '@actions/core'
+import { platform } from 'os'
+import { writeFileSync } from 'fs'
+import { fileSync } from 'tmp'
+import { deleteKeychain, installCertIntoTemporaryKeychain } from './security'
 
 async function run(): Promise<void> {
   try {
-    if (os.platform() !== 'darwin') {
+    if (platform() !== 'darwin') {
       throw new Error('Action requires macOS agent.')
     }
 
-    const keychain: string = core.getInput('keychain')
-    const createKeychain: boolean = core.getInput('create-keychain') === 'true'
-    let keychainPassword: string = core.getInput('keychain-password')
-    let p12Filepath: string = core.getInput('p12-filepath')
-    const p12FileBase64: string = core.getInput('p12-file-base64')
-    const p12Password: string = core.getInput('p12-password')
+    const keychain: string = getInput('keychain')
+    const createKeychain: boolean = getInput('create-keychain') === 'true'
+    let keychainPassword: string = getInput('keychain-password')
+    let p12Filepath: string = getInput('p12-filepath')
+    const p12FileBase64: string = getInput('p12-file-base64')
+    const p12Password: string = getInput('p12-password')
     const deleteKeychainIfExists: boolean =
-      core.getInput('delete-keychain-if-exists') === 'true'
+      getInput('delete-keychain-if-exists') === 'true'
 
     if (p12Filepath === '' && p12FileBase64 === '') {
       throw new Error(
@@ -27,9 +27,9 @@ async function run(): Promise<void> {
 
     if (p12FileBase64 !== '') {
       const buffer = Buffer.from(p12FileBase64, 'base64')
-      const tempFile = tmp.fileSync()
+      const tempFile = fileSync()
       p12Filepath = tempFile.name
-      fs.writeFileSync(p12Filepath, buffer)
+      writeFileSync(p12Filepath, buffer)
     }
 
     if (keychainPassword === '') {
@@ -37,18 +37,18 @@ async function run(): Promise<void> {
       keychainPassword = Math.random().toString(36)
     }
 
-    core.setOutput('keychain-password', keychainPassword)
-    core.setSecret(keychainPassword)
+    setOutput('keychain-password', keychainPassword)
+    setSecret(keychainPassword)
 
     if (deleteKeychainIfExists) {
       try {
-        await security.deleteKeychain(keychain)
+        await deleteKeychain(keychain)
       } catch (error) {
-        core.warning(`Failed to delete keychain: ${error}`)
+        warning(`Failed to delete keychain: ${error}`)
       }
     }
 
-    await security.installCertIntoTemporaryKeychain(
+    await installCertIntoTemporaryKeychain(
       keychain,
       createKeychain,
       keychainPassword,
@@ -57,9 +57,9 @@ async function run(): Promise<void> {
     )
   } catch (error) {
     if (error instanceof Error) {
-      core.setFailed(error.message)
+      setFailed(error.message)
     } else {
-      core.setFailed(`Action failed with error ${error}`)
+      setFailed(`Action failed with error ${error}`)
     }
   }
 }
