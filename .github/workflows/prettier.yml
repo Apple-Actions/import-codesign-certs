@@ -1,0 +1,32 @@
+name: prettier
+
+run-name: Check prettier
+
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  prettier:
+    name: prettier
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4.2.2
+
+      - name: Enable corepack (workaround)
+        run: corepack enable
+
+      - name: Setup Node
+        uses: actions/setup-node@v4.3.0
+        with:
+          node-version-file: package.json
+          cache: yarn
+
+      - name: Install Dependencies
+        run: yarn install --immutable
+
+      - name: Check
+        run: yarn format-check

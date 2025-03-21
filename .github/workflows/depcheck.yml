@@ -1,0 +1,30 @@
+name: depcheck
+
+run-name: depcheck
+
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  depcheck:
+    name: depcheck
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4.2.2
+
+      - name: Setup Node
+        uses: actions/setup-node@v4.2.0
+        with:
+          node-version-file: package.json
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: depcheck
+        uses: tf-actions/depcheck@v9.1.0
+        version: "1.4.7"
