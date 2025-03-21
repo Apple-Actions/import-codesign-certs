@@ -19,6 +19,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4.2.2
 
+      - name: Enable corepack (workaround)
+        run: corepack enable
+
       - name: Set up Node
         uses: actions/setup-node@v4.3.0
         with:
