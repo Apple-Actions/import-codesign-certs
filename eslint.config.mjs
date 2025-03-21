@@ -6,7 +6,9 @@ export default defineConfig([
     '**/dist/',
     '**/lib/',
     '**/node_modules/',
-    'eslint.config.mjs'
+    'eslint.config.mjs',
+    '.pnp.cjs',
+    '.pnp.loader.mjs'
   ]),
   github.getFlatConfigs().internal,
   github.getFlatConfigs().recommended,
