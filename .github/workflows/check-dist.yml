@@ -40,7 +40,7 @@ jobs:
       - name: Compare the expected and actual dist/ directories
         run: |
           if [ "$(git diff --ignore-space-at-eol dist/ | wc -l)" -gt "0" ]; then
-            echo "::error::Detected uncommitted changes after build. Run 'npm run build' and commit the changes."
+            echo "::error::Detected uncommitted changes after build. Run 'yarn build' and commit the changes."
             git diff --text -v
             exit 1
           fi
