@@ -36,7 +36,7 @@
     "@types/tmp": "~0.2.0",
     "@vercel/ncc": "~0.38.0",
     "eslint": "~9.22.0",
-    "eslint-plugin-github": "~5.1.0",
+    "eslint-plugin-github": "~6.0.0",
     "prettier": "~3.5.0",
     "typescript": "~5.8.0"
   },
