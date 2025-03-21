@@ -9,9 +9,9 @@
   },
   "scripts": {
     "build": "tsc --outDir lib",
-    "format": "prettier --write **/*.ts",
-    "format-check": "prettier --check **/*.ts",
-    "lint": "eslint src/**/*.ts",
+    "format": "prettier --write src/",
+    "format-check": "prettier --check src/",
+    "lint": "eslint",
     "package": "ncc build --license licenses.txt",
     "all": "yarn format && yarn lint && yarn build && yarn package"
   },
@@ -34,8 +34,6 @@
   "devDependencies": {
     "@types/node": "~22.13.0",
     "@types/tmp": "~0.2.0",
-    "@typescript-eslint/eslint-plugin": "~8.26.0",
-    "@typescript-eslint/parser": "~8.26.0",
     "@vercel/ncc": "~0.38.0",
     "eslint": "~9.22.0",
     "eslint-plugin-github": "~5.1.0",
