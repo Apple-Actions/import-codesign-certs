@@ -13,7 +13,7 @@
     "format-check": "prettier --check **/*.ts",
     "lint": "eslint src/**/*.ts",
     "package": "ncc build --license licenses.txt",
-    "all": "yarn build && yarn format && yarn lint && yarn package"
+    "all": "yarn format && yarn lint && yarn build && yarn package"
   },
   "repository": {
     "type": "git",

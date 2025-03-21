@@ -2,15 +2,10 @@
 
 Install the dependencies  
 ```bash
-$ npm install
+$ yarn install
 ```
 
-Build the typescript
+Build the code
 ```bash
-$ npm run build
-```
-
-Run the tests :heavy_check_mark:  
-```bash
-$ npm test
+$ yarn all
 ```
