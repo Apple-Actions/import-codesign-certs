@@ -1,7 +1,3 @@
-# 🔨 NEED NEW MAINTAINER 🔨
-
-This repository needs a new maintainer who can actively manage it. If you would like to become that maintainer then please contact me (@orj@mastodon.social).
-
 # GitHub Action to import Apple Code-signing Certificates and Keys
 
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat)](LICENSE)
