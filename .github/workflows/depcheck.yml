@@ -27,4 +27,5 @@ jobs:
 
       - name: depcheck
         uses: tf-actions/depcheck@v9.1.0
-        version: "1.4.7"
+        with:
+          version: "1.4.7"
