@@ -29,6 +29,4 @@ jobs:
         run: yarn install --immutable
 
       - name: depcheck
-        uses: tj-actions/depcheck@v9.1.0
-        with:
-          version: "1.4.7"
+        run: npx depcheck@1.4.7
