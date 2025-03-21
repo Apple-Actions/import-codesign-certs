@@ -5,6 +5,8 @@
 # We need to make sure the checked-in `index.js` actually matches what we expect it to be.
 name: Check dist/
 
+run-name: Check dist/
+
 on:
   push:
     branches:
