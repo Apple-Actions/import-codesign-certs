@@ -32,7 +32,7 @@ outputs:
   security-response:
     description: 'The output of the security commands.'
 runs:
-  using: 'node22'
+  using: 'node20'
   main: 'dist/index.js'
 branding:
   icon: 'lock'
