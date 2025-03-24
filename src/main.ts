@@ -1,4 +1,10 @@
-import {getInput, setFailed, setOutput, setSecret, warning} from '@actions/core'
+import {
+  getInput,
+  getState,
+  setFailed,
+  setOutput,
+  setSecret
+} from '@actions/core'
 import {platform} from 'os'
 import {writeFileSync} from 'fs'
 import {fileSync} from 'tmp'
@@ -16,8 +22,6 @@ async function run(): Promise<void> {
     let p12Filepath: string = getInput('p12-filepath')
     const p12FileBase64: string = getInput('p12-file-base64')
     const p12Password: string = getInput('p12-password')
-    const deleteKeychainIfExists: boolean =
-      getInput('delete-keychain-if-exists') === 'true'
 
     if (p12Filepath === '' && p12FileBase64 === '') {
       throw new Error(
@@ -40,14 +44,6 @@ async function run(): Promise<void> {
     setOutput('keychain-password', keychainPassword)
     setSecret(keychainPassword)
 
-    if (deleteKeychainIfExists) {
-      try {
-        await deleteKeychain(keychain)
-      } catch (error) {
-        warning(`Failed to delete keychain: ${error}`)
-      }
-    }
-
     await installCertIntoTemporaryKeychain(
       keychain,
       createKeychain,
@@ -64,4 +60,22 @@ async function run(): Promise<void> {
   }
 }
 
-run()
+async function cleanup(): Promise<void> {
+  try {
+    const keychain: string = getInput('keychain')
+
+    await deleteKeychain(keychain)
+  } catch (error) {
+    if (error instanceof Error) {
+      setFailed(error.message)
+    } else {
+      setFailed(`Action failed with error ${error}`)
+    }
+  }
+}
+
+if (getState('isPost')) {
+  cleanup()
+} else {
+  run()
+}

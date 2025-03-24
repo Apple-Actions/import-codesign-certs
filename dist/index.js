@@ -28512,7 +28512,6 @@ async function run() {
         let p12Filepath = (0, core_1.getInput)('p12-filepath');
         const p12FileBase64 = (0, core_1.getInput)('p12-file-base64');
         const p12Password = (0, core_1.getInput)('p12-password');
-        const deleteKeychainIfExists = (0, core_1.getInput)('delete-keychain-if-exists') === 'true';
         if (p12Filepath === '' && p12FileBase64 === '') {
             throw new Error('At least one of p12-filepath or p12-file-base64 must be provided');
         }
@@ -28528,14 +28527,6 @@ async function run() {
         }
         (0, core_1.setOutput)('keychain-password', keychainPassword);
         (0, core_1.setSecret)(keychainPassword);
-        if (deleteKeychainIfExists) {
-            try {
-                await (0, security_1.deleteKeychain)(keychain);
-            }
-            catch (error) {
-                (0, core_1.warning)(`Failed to delete keychain: ${error}`);
-            }
-        }
         await (0, security_1.installCertIntoTemporaryKeychain)(keychain, createKeychain, keychainPassword, p12Filepath, p12Password);
     }
     catch (error) {
@@ -28547,7 +28538,26 @@ async function run() {
         }
     }
 }
-run();
+async function cleanup() {
+    try {
+        const keychain = (0, core_1.getInput)('keychain');
+        await (0, security_1.deleteKeychain)(keychain);
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            (0, core_1.setFailed)(error.message);
+        }
+        else {
+            (0, core_1.setFailed)(`Action failed with error ${error}`);
+        }
+    }
+}
+if ((0, core_1.getState)('isPost')) {
+    cleanup();
+}
+else {
+    run();
+}
 
 })();
 
