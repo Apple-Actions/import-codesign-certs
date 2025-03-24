@@ -99,10 +99,6 @@ async function importPkcs12(
     keychain,
     '-f',
     'pkcs12',
-    // This option allows any application to read keys.
-    // This would be insecure if the keychain was retained but GitHub action
-    // VMs are thrown away after use.
-    '-A',
     '-T',
     '/usr/bin/codesign',
     '-T',
