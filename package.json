@@ -12,7 +12,7 @@
     "format": "prettier --write src/",
     "format-check": "prettier --check src/",
     "lint": "eslint",
-    "package": "ncc build --license licenses.txt && ncc build -o dist/cleanup lib/cleanup.js",
+    "package": "ncc build --license licenses.txt",
     "all": "yarn format && yarn lint && yarn build && yarn package"
   },
   "repository": {

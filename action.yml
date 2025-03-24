@@ -30,7 +30,7 @@ outputs:
 runs:
   using: 'node20'
   main: 'dist/index.js'
-  post: 'dist/cleanup/index.js'
+  post: 'dist/index.js'
 branding:
   icon: 'lock'
   color: 'blue'

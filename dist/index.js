@@ -28536,7 +28536,27 @@ async function run() {
         }
     }
 }
-run();
+async function cleanup() {
+    try {
+        const keychain = (0, core_1.getInput)('keychain');
+        await (0, security_1.deleteKeychain)(keychain);
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            (0, core_1.setFailed)(error.message);
+        }
+        else {
+            (0, core_1.setFailed)(`Action failed with error ${error}`);
+        }
+    }
+}
+if ((0, core_1.getState)('isPost')) {
+    cleanup();
+}
+else {
+    (0, core_1.saveState)('isPost', 'true');
+    run();
+}
 
 })();
 
