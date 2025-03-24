@@ -74,8 +74,10 @@ async function cleanup(): Promise<void> {
   }
 }
 
-if (getState('isPost')) {
-  cleanup()
-} else {
+const isPost = !!getState('isPost')
+
+if (!isPost) {
   run()
+} else {
+  cleanup()
 }

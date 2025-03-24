@@ -28550,11 +28550,12 @@ async function cleanup() {
         }
     }
 }
-if ((0, core_1.getState)('isPost')) {
-    cleanup();
+const isPost = !!(0, core_1.getState)('isPost');
+if (!isPost) {
+    run();
 }
 else {
-    run();
+    cleanup();
 }
 
 })();
