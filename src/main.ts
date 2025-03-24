@@ -1,14 +1,8 @@
-import {
-  getInput,
-  getState,
-  setFailed,
-  setOutput,
-  setSecret
-} from '@actions/core'
+import {getInput, setFailed, setOutput, setSecret} from '@actions/core'
 import {platform} from 'os'
 import {writeFileSync} from 'fs'
 import {fileSync} from 'tmp'
-import {deleteKeychain, installCertIntoTemporaryKeychain} from './security'
+import {installCertIntoTemporaryKeychain} from './security'
 
 async function run(): Promise<void> {
   try {
@@ -60,24 +54,4 @@ async function run(): Promise<void> {
   }
 }
 
-async function cleanup(): Promise<void> {
-  try {
-    const keychain: string = getInput('keychain')
-
-    await deleteKeychain(keychain)
-  } catch (error) {
-    if (error instanceof Error) {
-      setFailed(error.message)
-    } else {
-      setFailed(`Action failed with error ${error}`)
-    }
-  }
-}
-
-const isPost = !!getState('isPost')
-
-if (!isPost) {
-  run()
-} else {
-  cleanup()
-}
+run()
