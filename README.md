@@ -5,25 +5,21 @@
 
 ## Getting Started
 
-First, generate your signing certificates in the Xcode preferences. Click on the Accounts tab, select your user account and click Manage Certificates. Click the plus button and add the relevant certificates for the type of app you are developing.
-
-Next, create a .p12 file that combines all of your certificates and private keys using [these instructions](https://calvium.com/how-to-make-a-p12-file/). 
-
-Copy the .p12 format in base64:
-
-```sh
-base64 -i CertificateFile.p12 | pbcopy
-```
-
-Paste the output of the above command into a secret called `CERTIFICATES_P12` and the password into `CERTIFICATES_P12_PASSWORD` into the GitHub Actions Secrets in the GitHub settings.
+* Create a certificate signing request (see [here](https://developer.apple.com/help/account/certificates/create-a-certificate-signing-request/))
+* Create a `iOS Distribution (App Store Connect and Ad Hoc)` (same as [these instructions](https://developer.apple.com/help/account/certificates/create-enterprise-distribution-certificates) but select the different type on step 3)
+* Download the certificate (must be done upon creation and will be called `ios_distribution.cer`)
+* Import into `login` section of Keychain Access (must be launched with spotlight because it doesn't show up in Launchpad)
+* Select `My Certificates` and then export the certificate as a `.p12` (it will prompt for a password)
+* Copy the `.p12` in base64 format ( `base64 -i ios_distribution.p12 | pbcopy` )
+* Add it as a secret called `APPSTORE_CERTIFICATES_FILE_BASE64` and the password as `APPSTORE_CERTIFICATES_PASSWORD`
 
 ## Usage
 
 ```yaml
 uses: apple-actions/import-codesign-certs@v3
 with: 
-  p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
-  p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
+  p12-file-base64: ${{ secrets.APPSTORE_CERTIFICATES_FILE_BASE64 }}
+  p12-password: ${{ secrets.APPSTORE_CERTIFICATES_PASSWORD }}
 ```
 
 ## Multiple Certificates
