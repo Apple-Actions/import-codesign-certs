@@ -24,7 +24,7 @@
     "node",
     "setup"
   ],
-  "author": "Itty Bitty Apps Ptr Ltd",
+  "author": "Itty Bitty Apps Pty Ltd",
   "license": "MIT",
   "dependencies": {
     "@actions/core": "~1.11.0",
