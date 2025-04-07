@@ -28495,8 +28495,8 @@ var exports = __webpack_exports__;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __nccwpck_require__(7484);
-const os_1 = __nccwpck_require__(857);
 const fs_1 = __nccwpck_require__(9896);
+const os_1 = __nccwpck_require__(857);
 const tmp_1 = __nccwpck_require__(1288);
 const security_1 = __nccwpck_require__(724);
 async function run() {
@@ -28539,7 +28539,11 @@ async function run() {
 async function cleanup() {
     try {
         const keychain = (0, core_1.getInput)('keychain');
-        await (0, security_1.deleteKeychain)(keychain);
+        const didCreateKeychain = (0, core_1.getInput)('create-keychain') === 'true';
+        // only delete the keychain if it was created by this action
+        if (didCreateKeychain) {
+            await (0, security_1.deleteKeychain)(keychain);
+        }
     }
     catch (error) {
         if (error instanceof Error) {

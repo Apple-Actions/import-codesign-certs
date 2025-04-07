@@ -1,13 +1,13 @@
 import {
+  getInput,
   getState,
   saveState,
-  getInput,
   setFailed,
   setOutput,
   setSecret
 } from '@actions/core'
-import {platform} from 'os'
 import {writeFileSync} from 'fs'
+import {platform} from 'os'
 import {fileSync} from 'tmp'
 import {deleteKeychain, installCertIntoTemporaryKeychain} from './security'
 
@@ -64,8 +64,12 @@ async function run(): Promise<void> {
 async function cleanup(): Promise<void> {
   try {
     const keychain: string = getInput('keychain')
+    const didCreateKeychain: boolean = getInput('create-keychain') === 'true'
 
-    await deleteKeychain(keychain)
+    // only delete the keychain if it was created by this action
+    if (didCreateKeychain) {
+      await deleteKeychain(keychain)
+    }
   } catch (error) {
     if (error instanceof Error) {
       setFailed(error.message)
