@@ -1,6 +1,6 @@
-name: depcheck
+name: knip
 
-run-name: depcheck
+run-name: knip
 
 on:
   push:
@@ -8,8 +8,8 @@ on:
       - "**"
 
 jobs:
-  depcheck:
-    name: depcheck
+  knip:
+    name: knip
     runs-on: ubuntu-24.04
 
     steps:
@@ -28,5 +28,5 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
-      - name: depcheck
-        run: npx depcheck@1.4.7
+      - name: knip
+        run: node_modules/.bin/knip
