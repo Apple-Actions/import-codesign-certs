@@ -1862,7 +1862,7 @@ __metadata:
     "@vercel/ncc": "npm:~0.38.0"
     eslint: "npm:~9.24.0"
     eslint-plugin-github: "npm:~6.0.0"
-    knip: "npm:~5.50.3"
+    knip: "npm:~5.50.5"
     prettier: "npm:~3.5.0"
     tmp: "npm:~0.2.0"
     typescript: "npm:~5.8.3"
@@ -2253,9 +2253,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"knip@npm:~5.50.3":
-  version: 5.50.3
-  resolution: "knip@npm:5.50.3"
+"knip@npm:~5.50.5":
+  version: 5.50.5
+  resolution: "knip@npm:5.50.5"
   dependencies:
     "@nodelib/fs.walk": "npm:^1.2.3"
     easy-table: "npm:1.2.0"
@@ -2277,7 +2277,7 @@ __metadata:
   bin:
     knip: bin/knip.js
     knip-bun: bin/knip-bun.js
-  checksum: 10c0/a0f059a5684856a2957e1a41fcd4a4c67a520b87da2af5ce2643686dfabc2703d1b0613e55eb2d1263c0f3b00ab85069ee3ab228c0ee787eccac511f20781107
+  checksum: 10c0/17322b42a5b9aa5b79de9d807cf90ee0937e3e24f53289f58829c3d73700b66f4fb5b336d4579325eb8ff7f0cb82292bcb2af5791437f34ba285dd01a4efc8b2
   languageName: node
   linkType: hard
 
