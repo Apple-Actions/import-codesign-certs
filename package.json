@@ -11,9 +11,10 @@
     "build": "tsc --outDir lib",
     "format": "prettier --write src/",
     "format-check": "prettier --check src/",
+    "knip": "knip",
     "lint": "eslint",
     "package": "ncc build --license licenses.txt",
-    "all": "yarn format && yarn lint && yarn build && yarn package"
+    "all": "yarn format && yarn knip && yarn lint && yarn build && yarn package"
   },
   "repository": {
     "type": "git",
