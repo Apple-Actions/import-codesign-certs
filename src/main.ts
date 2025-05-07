@@ -64,8 +64,12 @@ async function run(): Promise<void> {
 async function cleanup(): Promise<void> {
   try {
     const keychain: string = getInput('keychain')
+    const createdKeychain: boolean = getInput('create-keychain') === 'true'
 
-    await deleteKeychain(keychain)
+    // Only delete the keychain if it was created by the module
+    if (createdKeychain) {
+      await deleteKeychain(keychain)
+    }
   } catch (error) {
     if (error instanceof Error) {
       setFailed(error.message)
