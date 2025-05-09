@@ -28539,7 +28539,11 @@ async function run() {
 async function cleanup() {
     try {
         const keychain = (0, core_1.getInput)('keychain');
-        await (0, security_1.deleteKeychain)(keychain);
+        const createdKeychain = (0, core_1.getInput)('create-keychain') === 'true';
+        // Only delete the keychain if it was created by the module
+        if (createdKeychain) {
+            await (0, security_1.deleteKeychain)(keychain);
+        }
     }
     catch (error) {
         if (error instanceof Error) {
