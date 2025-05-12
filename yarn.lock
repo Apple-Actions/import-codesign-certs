@@ -1685,6 +1685,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fd-package-json@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "fd-package-json@npm:1.2.0"
+  dependencies:
+    walk-up-path: "npm:^3.0.1"
+  checksum: 10c0/712a78a12bd8ec8482867b26bbcb2ff1dca9b096a416150c138e1512f1879c6d23dfb41b03b8e9226afc1e58a35df4738e9f9ae57032ff1dbbae75acfb70343b
+  languageName: node
+  linkType: hard
+
 "file-entry-cache@npm:^8.0.0":
   version: 8.0.0
   resolution: "file-entry-cache@npm:8.0.0"
@@ -1760,6 +1769,17 @@ __metadata:
     cross-spawn: "npm:^7.0.6"
     signal-exit: "npm:^4.0.1"
   checksum: 10c0/8986e4af2430896e65bc2788d6679067294d6aee9545daefc84923a0a4b399ad9c7a3ea7bd8c0b2b80fdf4a92de4c69df3f628233ff3224260e9c1541a9e9ed3
+  languageName: node
+  linkType: hard
+
+"formatly@npm:^0.2.3":
+  version: 0.2.3
+  resolution: "formatly@npm:0.2.3"
+  dependencies:
+    fd-package-json: "npm:^1.2.0"
+  bin:
+    formatly: bin/index.mjs
+  checksum: 10c0/d63e492b9f281ce68a40baab609536acc6e7e09343e53f261b2203726cebd8db145d329c6bca2f8a494f4e16db3ade6c9d1a62c32c66df170d04fbc82893ceda
   languageName: node
   linkType: hard
 
@@ -2056,7 +2076,7 @@ __metadata:
     "@vercel/ncc": "npm:~0.38.0"
     eslint: "npm:~9.26.0"
     eslint-plugin-github: "npm:~6.0.0"
-    knip: "npm:~5.53.0"
+    knip: "npm:~5.55.1"
     prettier: "npm:~3.5.0"
     tmp: "npm:~0.2.0"
     typescript: "npm:~5.8.3"
@@ -2468,13 +2488,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"knip@npm:~5.53.0":
-  version: 5.53.0
-  resolution: "knip@npm:5.53.0"
+"knip@npm:~5.55.1":
+  version: 5.55.1
+  resolution: "knip@npm:5.55.1"
   dependencies:
     "@nodelib/fs.walk": "npm:^1.2.3"
     enhanced-resolve: "npm:^5.18.1"
     fast-glob: "npm:^3.3.3"
+    formatly: "npm:^0.2.3"
     jiti: "npm:^2.4.2"
     js-yaml: "npm:^4.1.0"
     minimist: "npm:^1.2.8"
@@ -2490,7 +2511,7 @@ __metadata:
   bin:
     knip: bin/knip.js
     knip-bun: bin/knip-bun.js
-  checksum: 10c0/7a4d57ab3ae69ff52ea1dff978841bad9ffcf8e99c7c8f583508e34d00dbfe0fa05bf2c5eb6771db595ba5567d065372294d22ae937ec2b0e75b2f0021369a91
+  checksum: 10c0/fd96d300f3f62a34dc3b6845ef7091b070d7ac3fba9856f6798934eaa1d72085673cdf58a3c66f2d437da9101ec7779c7531730440178e93fd36d39987e44585
   languageName: node
   linkType: hard
 
@@ -3919,6 +3940,13 @@ __metadata:
   version: 1.1.2
   resolution: "vary@npm:1.1.2"
   checksum: 10c0/f15d588d79f3675135ba783c91a4083dcd290a2a5be9fcb6514220a1634e23df116847b1cc51f66bfb0644cf9353b2abb7815ae499bab06e46dd33c1a6bf1f4f
+  languageName: node
+  linkType: hard
+
+"walk-up-path@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "walk-up-path@npm:3.0.1"
+  checksum: 10c0/3184738e0cf33698dd58b0ee4418285b9c811e58698f52c1f025435a85c25cbc5a63fee599f1a79cb29ca7ef09a44ec9417b16bfd906b1a37c305f7aa20ee5bc
   languageName: node
   linkType: hard
 
