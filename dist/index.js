@@ -88,6 +88,8 @@ async function importPkcs12(keychain, p12FilePath, p12Password, options) {
         '-T',
         '/usr/bin/security',
         '-T',
+        '/usr/bin/pkgbuild',
+        '-T',
         '/usr/bin/productbuild',
         '-P',
         p12Password

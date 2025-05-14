@@ -104,6 +104,8 @@ async function importPkcs12(
     '-T',
     '/usr/bin/security',
     '-T',
+    '/usr/bin/pkgbuild',
+    '-T',
     '/usr/bin/productbuild',
     '-P',
     p12Password
