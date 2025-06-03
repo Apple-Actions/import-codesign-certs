@@ -446,12 +446,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:~20.17.0":
-  version: 20.17.46
-  resolution: "@types/node@npm:20.17.46"
+"@types/node@npm:~20.17.57":
+  version: 20.17.57
+  resolution: "@types/node@npm:20.17.57"
   dependencies:
     undici-types: "npm:~6.19.2"
-  checksum: 10c0/2b8cf1ea80af3c62247636fe44ec815e64978085c6f714792ad93d9cc826395b0bf7a969870f90274bf3a129b9d23994aa3a9c5e4cf00477d43f929330953662
+  checksum: 10c0/c04f3b6c4f335ad50bd3af62cd9e64a86c355cb6b363cb0e618511db4c6801c8539781c3786076eca6f56e999d6c7fc4748e43393a107aad57e65e3ffd1f73bf
   languageName: node
   linkType: hard
 
@@ -1984,7 +1984,7 @@ __metadata:
   dependencies:
     "@actions/core": "npm:~1.11.0"
     "@actions/exec": "npm:~1.1.0"
-    "@types/node": "npm:~20.17.0"
+    "@types/node": "npm:~20.17.57"
     "@types/tmp": "npm:~0.2.0"
     "@vercel/ncc": "npm:~0.38.0"
     eslint: "npm:~9.28.0"
