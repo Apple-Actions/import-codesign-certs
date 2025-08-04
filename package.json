@@ -40,7 +40,7 @@
     "eslint-plugin-github": "~6.0.0",
     "knip": "~5.59.1",
     "prettier": "~3.5.0",
-    "typescript": "~5.8.3"
+    "typescript": "~5.9.2"
   },
   "packageManager": "yarn@4.9.1"
 }
