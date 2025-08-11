@@ -33,7 +33,7 @@
     "tmp": "~0.2.0"
   },
   "devDependencies": {
-    "@types/node": "~20.19.9",
+    "@types/node": "~20.19.10",
     "@types/tmp": "~0.2.0",
     "@vercel/ncc": "~0.38.0",
     "eslint": "~9.31.0",
