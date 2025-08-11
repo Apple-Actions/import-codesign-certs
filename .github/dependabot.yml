@@ -9,6 +9,3 @@ updates:
     directory: /
     schedule:
       interval: weekly
-    ignore:
-      - dependency-name: "@types/node"
-        versions: [">= 22.0"]
