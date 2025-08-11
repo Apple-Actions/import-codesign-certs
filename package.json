@@ -1,6 +1,6 @@
 {
   "name": "import-codesign-certs",
-  "version": "5.0.1",
+  "version": "5.0.3",
   "private": true,
   "description": "GitHub Action for Importing Code-signing Certificates into a Keychain",
   "main": "lib/main.js",
