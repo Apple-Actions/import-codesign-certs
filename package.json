@@ -38,7 +38,7 @@
     "@vercel/ncc": "~0.38.0",
     "eslint": "~9.34.0",
     "eslint-plugin-github": "~6.0.0",
-    "knip": "~5.63.0",
+    "knip": "~5.64.1",
     "prettier": "~3.6.0",
     "typescript": "~5.9.0"
   },
