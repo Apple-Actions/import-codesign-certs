@@ -641,14 +641,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vercel/ncc@npm:~0.38.0":
-  version: 0.38.3
-  resolution: "@vercel/ncc@npm:0.38.3"
+"@vercel/ncc@npm:~0.38.4":
+  version: 0.38.4
+  resolution: "@vercel/ncc@npm:0.38.4"
   dependencies:
     node-gyp: "npm:latest"
   bin:
     ncc: dist/ncc/cli.js
-  checksum: 10c0/91b328b53d3bb17ac2fd329d9d2115192d2001e52a7f6d38828ce878e465f3bc62031a8b206bdbbf90e449c11f9e411f853f7081a6e2947ef3459365fa12da49
+  checksum: 10c0/dd6f5e95c09aa2db957788dd1fc7e5dc208b5268dc19a1560f8a71c1b18d234bb8ca0990f972051efcbc8d1cc5458242168bbdca54212a605ed0b4f680d3d876
   languageName: node
   linkType: hard
 
@@ -2065,7 +2065,7 @@ __metadata:
     "@actions/exec": "npm:~1.1.0"
     "@types/node": "npm:~24.3.0"
     "@types/tmp": "npm:~0.2.0"
-    "@vercel/ncc": "npm:~0.38.0"
+    "@vercel/ncc": "npm:~0.38.4"
     eslint: "npm:~9.34.0"
     eslint-plugin-github: "npm:~6.0.0"
     knip: "npm:~5.63.0"
