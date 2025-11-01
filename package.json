@@ -35,7 +35,7 @@
   "devDependencies": {
     "@types/node": "~24.6.1",
     "@types/tmp": "~0.2.0",
-    "@vercel/ncc": "~0.38.0",
+    "@vercel/ncc": "~0.38.4",
     "eslint": "~9.36.0",
     "eslint-plugin-github": "~6.0.0",
     "knip": "~5.64.1",
