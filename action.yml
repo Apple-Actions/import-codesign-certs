@@ -28,7 +28,7 @@ outputs:
   security-response:
     description: 'The output of the security commands.'
 runs:
-  using: 'node20'
+  using: 'node24'
   main: 'dist/index.js'
   post: 'dist/index.js'
 branding:
