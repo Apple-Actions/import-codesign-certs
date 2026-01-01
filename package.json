@@ -28,7 +28,7 @@
   "author": "Itty Bitty Apps Pty Ltd",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "~1.11.0",
+    "@actions/core": "~2.0.1",
     "@actions/exec": "~1.1.0",
     "tmp": "~0.2.0"
   },
