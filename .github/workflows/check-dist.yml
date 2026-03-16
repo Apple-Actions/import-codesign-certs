@@ -27,7 +27,7 @@ jobs:
         run: corepack enable
 
       - name: Set up Node
-        uses: actions/setup-node@v5.0.0
+        uses: actions/setup-node@v6.2.0
         with:
           node-version-file: package.json
           cache: yarn
@@ -51,7 +51,7 @@ jobs:
 
       # If index.js was different than expected, upload the expected version as an artifact
       - name: Upload expected
-        uses: actions/upload-artifact@v5.0.0
+        uses: actions/upload-artifact@v7.0.0
         if: ${{ failure() && steps.diff.conclusion == 'failure' }}
         with:
           name: dist
