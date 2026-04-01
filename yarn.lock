@@ -15,12 +15,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@actions/exec@npm:^2.0.0, @actions/exec@npm:~2.0.0":
+"@actions/exec@npm:^2.0.0":
   version: 2.0.0
   resolution: "@actions/exec@npm:2.0.0"
   dependencies:
     "@actions/io": "npm:^2.0.0"
   checksum: 10c0/21c7d51e8bd457e39daced34df05ba2b20365b66f3b00e838fc109a3f774d95b12a2aeeb5736d8a1ff1e50bbbea60cb6fb40b550c92d2c2e3ed74b9d6bdfc18b
+  languageName: node
+  linkType: hard
+
+"@actions/exec@npm:~3.0.0":
+  version: 3.0.0
+  resolution: "@actions/exec@npm:3.0.0"
+  dependencies:
+    "@actions/io": "npm:^3.0.2"
+  checksum: 10c0/5e4357cd8538ae8d94ffef653559202e7d18db18c5ecccd2c943b4aab989df9cf4e466fcc3c4405887a3c30b88e87b89fb7c7f5b179622d1192525ec891f0274
   languageName: node
   linkType: hard
 
@@ -38,6 +47,13 @@ __metadata:
   version: 2.0.0
   resolution: "@actions/io@npm:2.0.0"
   checksum: 10c0/b66170cbce7e19b9560f445ebbe0af2d031857efbe759020708745384d7a94b738dc09df2636e0c3049a9172c7b293d09f8a882bf5c25cc86bd19844cef61c41
+  languageName: node
+  linkType: hard
+
+"@actions/io@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "@actions/io@npm:3.0.2"
+  checksum: 10c0/25fae323886544f965e90ab9655e3fb60816eb379c78418c4b06a5dc9da27810eb5b0bd0629146dbd5482a03e3c60a5b8713223e4f789abede23df643ddcae8c
   languageName: node
   linkType: hard
 
@@ -2011,7 +2027,7 @@ __metadata:
   resolution: "import-codesign-certs@workspace:."
   dependencies:
     "@actions/core": "npm:~2.0.0"
-    "@actions/exec": "npm:~2.0.0"
+    "@actions/exec": "npm:~3.0.0"
     "@types/node": "npm:~24.9.0"
     "@types/tmp": "npm:~0.2.0"
     "@vercel/ncc": "npm:~0.38.0"
