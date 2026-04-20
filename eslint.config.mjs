@@ -4,7 +4,6 @@ import github from 'eslint-plugin-github'
 export default defineConfig([
   globalIgnores([
     '**/dist/',
-    '**/lib/',
     '**/node_modules/',
     'eslint.config.mjs',
     '.pnp.cjs',
