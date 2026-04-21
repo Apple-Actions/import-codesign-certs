@@ -1,7 +1,6 @@
 {
   "name": "import-codesign-certs",
   "version": "7.0.0",
-  "private": true,
   "description": "GitHub Action for Importing Code-signing Certificates into a Keychain",
   "main": "src/main.ts",
   "engines": {
@@ -22,8 +21,9 @@
   },
   "keywords": [
     "actions",
-    "node",
-    "setup"
+    "apple",
+    "certificate",
+    "import"
   ],
   "author": "Itty Bitty Apps Pty Ltd",
   "license": "MIT",
