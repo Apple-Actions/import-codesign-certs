@@ -18841,16 +18841,31 @@ var require_tmp = __commonJS({
       ].join("");
       return path4.join(tmpDir, opts.dir, name);
     }
+    function _assertPath(option, value) {
+      if (typeof value !== "string") {
+        throw new Error(`${option} option must be a string, got "${typeof value}".`);
+      }
+      if (value.includes("..")) {
+        throw new Error("Relative value not allowed");
+      }
+      return value;
+    }
     function _assertOptionsBase(options) {
       if (!_isUndefined(options.name)) {
         const name = options.name;
         if (path4.isAbsolute(name)) throw new Error(`name option must not contain an absolute path, found "${name}".`);
         const basename3 = path4.basename(name);
-        if (basename3 === ".." || basename3 === "." || basename3 !== name)
+        if (basename3 === ".." || basename3 === "." || basename3 !== name) {
           throw new Error(`name option must not contain a path, found "${name}".`);
+        }
       }
-      if (!_isUndefined(options.template) && !options.template.match(TEMPLATE_PATTERN)) {
-        throw new Error(`Invalid template, found "${options.template}".`);
+      if (!_isUndefined(options.template)) {
+        if (typeof options.template !== "string") {
+          throw new Error(`template option must be a string, got "${typeof options.template}".`);
+        }
+        if (!options.template.match(TEMPLATE_PATTERN)) {
+          throw new Error(`Invalid template, found "${options.template}".`);
+        }
       }
       if (!_isUndefined(options.tries) && isNaN(options.tries) || options.tries < 0) {
         throw new Error(`Invalid tries, found "${options.tries}".`);
@@ -18860,15 +18875,16 @@ var require_tmp = __commonJS({
       options.detachDescriptor = !!options.detachDescriptor;
       options.discardDescriptor = !!options.discardDescriptor;
       options.unsafeCleanup = !!options.unsafeCleanup;
-      options.prefix = _isUndefined(options.prefix) ? "" : options.prefix;
-      options.postfix = _isUndefined(options.postfix) ? "" : options.postfix;
+      options.prefix = _isUndefined(options.prefix) ? "" : _assertPath("prefix", options.prefix);
+      options.postfix = _isUndefined(options.postfix) ? "" : _assertPath("postfix", options.postfix);
+      options.template = _isUndefined(options.template) ? void 0 : _assertPath("template", options.template);
     }
     function _getRelativePath(option, name, tmpDir, cb) {
       if (_isUndefined(name)) return cb(null);
       _resolvePath(name, tmpDir, function(err, resolvedPath) {
         if (err) return cb(err);
         const relativePath = path4.relative(tmpDir, resolvedPath);
-        if (!resolvedPath.startsWith(tmpDir)) {
+        if (relativePath.startsWith("..") || path4.isAbsolute(relativePath)) {
           return cb(new Error(`${option} option must be relative to "${tmpDir}", found "${relativePath}".`));
         }
         cb(null, relativePath);
@@ -18878,7 +18894,7 @@ var require_tmp = __commonJS({
       if (_isUndefined(name)) return;
       const resolvedPath = _resolvePathSync(name, tmpDir);
       const relativePath = path4.relative(tmpDir, resolvedPath);
-      if (!resolvedPath.startsWith(tmpDir)) {
+      if (relativePath.startsWith("..") || path4.isAbsolute(relativePath)) {
         throw new Error(`${option} option must be relative to "${tmpDir}", found "${relativePath}".`);
       }
       return relativePath;
