@@ -35,7 +35,7 @@
   "devDependencies": {
     "@types/node": "~25.9.1",
     "@types/tmp": "~0.2.0",
-    "esbuild": "~0.28.0",
+    "esbuild": "~0.28.1",
     "eslint": "~9.39.0",
     "eslint-plugin-github": "~6.0.0",
     "knip": "~6.15.0",
