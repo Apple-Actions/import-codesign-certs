@@ -28,19 +28,19 @@
   "author": "Itty Bitty Apps Pty Ltd",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "~3.0.1",
+    "@actions/core": "~3.0.0",
     "@actions/exec": "~3.0.0",
     "tmp": "~0.2.7"
   },
   "devDependencies": {
-    "@types/node": "~25.9.1",
+    "@types/node": "~26.1.2",
     "@types/tmp": "~0.2.0",
     "esbuild": "~0.28.0",
-    "eslint": "~9.39.0",
-    "eslint-plugin-github": "~6.0.0",
-    "knip": "~6.15.0",
-    "prettier": "~3.8.0",
+    "eslint": "~10.8.0",
+    "eslint-plugin-github": "~6.1.1",
+    "knip": "~6.31.0",
+    "prettier": "~3.9.6",
     "typescript": "~6.0.0"
   },
-  "packageManager": "yarn@4.14.1"
+  "packageManager": "yarn@4.17.1"
 }
