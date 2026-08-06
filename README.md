@@ -5,19 +5,33 @@
 
 ## Getting Started
 
+Use the same GitHub secrets as the rest of the [Apple-Actions](https://github.com/Apple-Actions) suite.
+
+### Canonical GitHub ENVs
+
+| Kind | Name | Purpose |
+| --- | --- | --- |
+| Secret | `APPSTORE_CERTIFICATES_FILE_BASE64` | Base64-encoded signing `.p12` |
+| Secret | `APPSTORE_CERTIFICATES_PASSWORD` | Password for the `.p12` |
+
+Related ASC API vars/secrets (used by download-profiles / upload-testflight): `APPSTORE_ISSUER_ID`, `APPSTORE_API_KEY_ID`, `APPSTORE_API_PRIVATE_KEY`.
+
+### Create the signing certificate
+
+Recommended: use the setup scripts in [`download-provisioning-profiles`](https://github.com/Apple-Actions/download-provisioning-profiles#one-shot-setup) (`scripts/setup.sh` or `scripts/create-signing-certificate.sh --p12-password ...`). That creates the distribution certificate via the App Store Connect API and prints values for the secrets above.
+
+Manual alternative:
+
 * Create a certificate signing request (see [here](https://developer.apple.com/help/account/certificates/create-a-certificate-signing-request/))
-* Create a `iOS Distribution (App Store Connect and Ad Hoc)` (same as [these instructions](https://developer.apple.com/help/account/certificates/create-enterprise-distribution-certificates) but select the different type on step 3)
-* Download the certificate (must be done upon creation and will be called `ios_distribution.cer`)
-* Import into `login` section of Keychain Access (must be launched with spotlight because it doesn't show up in Launchpad)
-* Select `My Certificates` and then export the certificate as a `.p12` (it will prompt for a password)
-* Copy the `.p12` in base64 format ( `base64 -i ios_distribution.p12 | pbcopy` )
-* Add it as a secret called `APPSTORE_CERTIFICATES_FILE_BASE64` and the password as `APPSTORE_CERTIFICATES_PASSWORD`
+* Create an `iOS Distribution (App Store Connect and Ad Hoc)` certificate
+* Download `ios_distribution.cer`, import into Keychain Access → **login** → **My Certificates**, export as `.p12`
+* `base64 -i ios_distribution.p12 | pbcopy` → secret `APPSTORE_CERTIFICATES_FILE_BASE64`, plus `APPSTORE_CERTIFICATES_PASSWORD`
 
 ## Usage
 
 ```yaml
 uses: apple-actions/import-codesign-certs@v7
-with: 
+with:
   p12-file-base64: ${{ secrets.APPSTORE_CERTIFICATES_FILE_BASE64 }}
   p12-password: ${{ secrets.APPSTORE_CERTIFICATES_PASSWORD }}
 ```
