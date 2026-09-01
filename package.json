@@ -37,7 +37,7 @@
     "@types/tmp": "~0.2.0",
     "esbuild": "~0.28.0",
     "eslint": "~10.8.0",
-    "eslint-plugin-github": "~6.1.1",
+    "eslint-plugin-github": "~6.1.2",
     "knip": "~6.31.0",
     "prettier": "~3.9.6",
     "typescript": "~6.0.0"
