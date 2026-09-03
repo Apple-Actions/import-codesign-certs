@@ -312,7 +312,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/eslintrc@npm:^3.1.0":
+"@eslint/eslintrc@npm:^3.3.6":
   version: 3.3.6
   resolution: "@eslint/eslintrc@npm:3.3.6"
   dependencies:
@@ -329,7 +329,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/js@npm:^9.14.0":
+"@eslint/js@npm:^9.39.5":
   version: 9.39.5
   resolution: "@eslint/js@npm:9.39.5"
   checksum: 10c0/49894e98ba313a7d3bfb1b20d55c0f9826be45a7db876fd84e533ac7f101b1d95b51cd22c6a6db3a45066b9c0d068c31b4a22fa0db8a6cc8744a25540efdb824
@@ -1776,13 +1776,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-github@npm:~6.1.1":
-  version: 6.1.1
-  resolution: "eslint-plugin-github@npm:6.1.1"
+"eslint-plugin-github@npm:~6.1.2":
+  version: 6.1.2
+  resolution: "eslint-plugin-github@npm:6.1.2"
   dependencies:
     "@eslint/compat": "npm:^2.0.0"
-    "@eslint/eslintrc": "npm:^3.1.0"
-    "@eslint/js": "npm:^9.14.0"
+    "@eslint/eslintrc": "npm:^3.3.6"
+    "@eslint/js": "npm:^9.39.5"
     "@github/browserslist-config": "npm:^1.0.0"
     "@typescript-eslint/eslint-plugin": "npm:^8.0.0"
     "@typescript-eslint/parser": "npm:^8.0.0"
@@ -1807,7 +1807,7 @@ __metadata:
     eslint: ^8 || ^9 || ^10
   bin:
     eslint-ignore-errors: bin/eslint-ignore-errors.js
-  checksum: 10c0/b9450eb6b99a2134bb4d9bd5c8831bde494cee4e8db1b38abf1020df50d269c319d1370c13a8b29da02e2fc20c18c7a329bb911bcc0f6ddb9e5f178378fffee4
+  checksum: 10c0/020c5bf3900792b9f5f4ca68197ffbfd4c39cdacbef1474baae485cdd0e56966d0dc7c11264f91208c7c58d8ffa910e5d6b5201aa8294e717426b9f600442671
   languageName: node
   linkType: hard
 
@@ -2349,7 +2349,7 @@ __metadata:
     "@types/tmp": "npm:~0.2.0"
     esbuild: "npm:~0.28.2"
     eslint: "npm:~10.9.1"
-    eslint-plugin-github: "npm:~6.1.1"
+    eslint-plugin-github: "npm:~6.1.2"
     knip: "npm:~6.33.0"
     prettier: "npm:~3.9.6"
     tmp: "npm:~0.2.0"
