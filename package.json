@@ -35,12 +35,12 @@
   "devDependencies": {
     "@types/node": "~26.1.2",
     "@types/tmp": "~0.2.0",
-    "esbuild": "~0.28.0",
+    "esbuild": "~0.28.2",
     "eslint": "~10.9.1",
     "eslint-plugin-github": "~6.1.2",
-    "knip": "~6.31.0",
+    "knip": "~6.33.0",
     "prettier": "~3.9.6",
-    "typescript": "~6.0.0"
+    "typescript": "~7.0.2"
   },
   "packageManager": "yarn@4.17.1"
 }
