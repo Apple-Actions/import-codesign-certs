@@ -30,7 +30,7 @@
   "dependencies": {
     "@actions/core": "~3.0.0",
     "@actions/exec": "~3.0.0",
-    "tmp": "~0.2.0"
+    "tmp": "~0.2.7"
   },
   "devDependencies": {
     "@types/node": "~26.1.2",
