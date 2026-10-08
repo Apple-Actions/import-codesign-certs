@@ -14827,7 +14827,7 @@ var require_util4 = __commonJS({
     var { getEncoding } = require_encoding();
     var { serializeAMimeType, parseMIMEType } = require_data_url();
     var { types } = __require("node:util");
-    var { StringDecoder } = __require("string_decoder");
+    var { StringDecoder: StringDecoder2 } = __require("string_decoder");
     var { btoa } = __require("node:buffer");
     var staticPropertyDescriptors = {
       enumerable: true,
@@ -14918,7 +14918,7 @@ var require_util4 = __commonJS({
             dataURL += serializeAMimeType(parsed);
           }
           dataURL += ";base64,";
-          const decoder = new StringDecoder("latin1");
+          const decoder = new StringDecoder2("latin1");
           for (const chunk of bytes) {
             dataURL += btoa(decoder.write(chunk));
           }
@@ -14947,7 +14947,7 @@ var require_util4 = __commonJS({
         }
         case "BinaryString": {
           let binaryString = "";
-          const decoder = new StringDecoder("latin1");
+          const decoder = new StringDecoder2("latin1");
           for (const chunk of bytes) {
             binaryString += decoder.write(chunk);
           }
@@ -19651,6 +19651,9 @@ var _summary = new Summary();
 // node_modules/@actions/core/lib/platform.js
 import os4 from "os";
 
+// node_modules/@actions/exec/lib/exec.js
+import { StringDecoder } from "string_decoder";
+
 // node_modules/@actions/exec/lib/toolrunner.js
 import * as os3 from "os";
 import * as events from "events";
@@ -20365,6 +20368,38 @@ function exec(commandLine, args, options) {
     return runner.exec();
   });
 }
+function getExecOutput(commandLine, args, options) {
+  return __awaiter5(this, void 0, void 0, function* () {
+    var _a, _b;
+    let stdout = "";
+    let stderr = "";
+    const stdoutDecoder = new StringDecoder("utf8");
+    const stderrDecoder = new StringDecoder("utf8");
+    const originalStdoutListener = (_a = options === null || options === void 0 ? void 0 : options.listeners) === null || _a === void 0 ? void 0 : _a.stdout;
+    const originalStdErrListener = (_b = options === null || options === void 0 ? void 0 : options.listeners) === null || _b === void 0 ? void 0 : _b.stderr;
+    const stdErrListener = (data) => {
+      stderr += stderrDecoder.write(data);
+      if (originalStdErrListener) {
+        originalStdErrListener(data);
+      }
+    };
+    const stdOutListener = (data) => {
+      stdout += stdoutDecoder.write(data);
+      if (originalStdoutListener) {
+        originalStdoutListener(data);
+      }
+    };
+    const listeners = Object.assign(Object.assign({}, options === null || options === void 0 ? void 0 : options.listeners), { stdout: stdOutListener, stderr: stdErrListener });
+    const exitCode = yield exec(commandLine, args, Object.assign(Object.assign({}, options), { listeners }));
+    stdout += stdoutDecoder.end();
+    stderr += stderrDecoder.end();
+    return {
+      exitCode,
+      stdout,
+      stderr
+    };
+  });
+}
 
 // node_modules/@actions/core/lib/platform.js
 var platform = os4.platform();
@@ -20420,6 +20455,27 @@ var import_tmp = __toESM(require_tmp());
 import { writeFileSync } from "fs";
 import { platform as platform2 } from "os";
 
+// src/identities.ts
+var IDENTITY_LINE = /^\s*\d+\)\s+([0-9A-F]{40})\s+"(.+)"\s*$/;
+function parseIdentities(text) {
+  const identities = /* @__PURE__ */ new Map();
+  for (const line of text.split("\n")) {
+    const match = IDENTITY_LINE.exec(line);
+    if (match && !identities.has(match[1])) {
+      identities.set(match[1], { hash: match[1], name: match[2] });
+    }
+  }
+  return [...identities.values()];
+}
+async function listIdentities(keychain) {
+  const { stdout } = await getExecOutput(
+    "security",
+    ["find-identity", "-v", "-p", "codesigning", keychain],
+    { silent: true }
+  );
+  return parseIdentities(stdout);
+}
+
 // src/security.ts
 async function installCertIntoTemporaryKeychain(keychain, setupKeychain, keychainPassword, p12FilePath, p12Password) {
   let output = "";
@@ -20450,6 +20506,7 @@ async function installCertIntoTemporaryKeychain(keychain, setupKeychain, keychai
   await setPartitionList(tempKeychain, keychainPassword);
   await updateKeychainList(tempKeychain, options);
   setOutput("security-response", output);
+  setOutput("identities", JSON.stringify(await listIdentities(tempKeychain)));
 }
 async function updateKeychainList(keychain, options) {
   const args = [

@@ -1,5 +1,6 @@
 import {setOutput} from '@actions/core'
 import {exec, type ExecOptions} from '@actions/exec'
+import {listIdentities} from './identities'
 
 export async function installCertIntoTemporaryKeychain(
   keychain: string,
@@ -39,6 +40,7 @@ export async function installCertIntoTemporaryKeychain(
   await updateKeychainList(tempKeychain, options)
 
   setOutput('security-response', output)
+  setOutput('identities', JSON.stringify(await listIdentities(tempKeychain)))
 }
 
 /**
