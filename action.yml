@@ -27,6 +27,8 @@ outputs:
     description: 'The password for temporary keychain.'
   security-response:
     description: 'The output of the security commands.'
+  identities:
+    description: 'JSON array of the valid code-signing identities in the keychain, each as {"hash": "<SHA-1>", "name": "<common name>"}. Sign by hash when a renewed certificate has the same name as the old one.'
 runs:
   using: 'node24'
   main: 'dist/index.js'
