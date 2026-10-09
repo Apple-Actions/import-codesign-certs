@@ -4,6 +4,8 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: npm
     directory: /
@@ -12,3 +14,5 @@ updates:
     ignore:
       - dependency-name: "@types/node"
         versions: ["25.x"]
+    cooldown:
+      default-days: 7
