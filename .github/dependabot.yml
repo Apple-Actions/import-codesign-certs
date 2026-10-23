@@ -13,6 +13,6 @@ updates:
       interval: monthly
     ignore:
       - dependency-name: "@types/node"
-        versions: ["25.x"]
+        versions: [">= 25"]
     cooldown:
       default-days: 7
