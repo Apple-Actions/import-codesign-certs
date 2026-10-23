@@ -2,10 +2,7 @@ import {readFileSync} from 'fs'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
 import {exec, getExecOutput} from '@actions/exec'
 import {setOutput} from '@actions/core'
-import {
-  deleteKeychain,
-  installCertIntoTemporaryKeychain
-} from '../src/security'
+import {deleteKeychain, installCertIntoTemporaryKeychain} from '../src/security'
 
 vi.mock('@actions/exec', () => ({exec: vi.fn(), getExecOutput: vi.fn()}))
 vi.mock('@actions/core', () => ({setOutput: vi.fn()}))
@@ -111,18 +108,8 @@ describe('installCertIntoTemporaryKeychain', () => {
 
     expect(securityArgs()).toEqual([
       ['create-keychain', '-p', 'keychain-password', 'signing_temp.keychain'],
-      [
-        'set-keychain-settings',
-        '-lut',
-        '21600',
-        'signing_temp.keychain'
-      ],
-      [
-        'unlock-keychain',
-        '-p',
-        'keychain-password',
-        'signing_temp.keychain'
-      ],
+      ['set-keychain-settings', '-lut', '21600', 'signing_temp.keychain'],
+      ['unlock-keychain', '-p', 'keychain-password', 'signing_temp.keychain'],
       [
         'import',
         'certs.p12',
@@ -183,12 +170,7 @@ describe('installCertIntoTemporaryKeychain', () => {
     )
 
     expect(securityArgs()).toEqual([
-      [
-        'unlock-keychain',
-        '-p',
-        'keychain-password',
-        'signing_temp.keychain'
-      ],
+      ['unlock-keychain', '-p', 'keychain-password', 'signing_temp.keychain'],
       [
         'import',
         'certs.p12',
