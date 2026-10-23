@@ -20,6 +20,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Tag release and queue next minor
         env:
@@ -43,13 +44,14 @@ jobs:
               console.error("package.json version must be semver X.Y.Z");
               process.exit(1);
             }
-            process.stdout.write(`${match[1]}.${match[2]}.${match[3]}`);
+            process.stdout.write(match[1] + "." + match[2] + "." + match[3]);
           ')"
           tag="v${version}"
           major="${version%%.*}"
           minor_patch="${version#*.}"
           minor="${minor_patch%%.*}"
           next="${major}.$((minor + 1)).0"
+          remote="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
 
           if git rev-parse -q --verify "refs/tags/${tag}" >/dev/null; then
             echo "::error::Tag ${tag} already exists"
@@ -62,10 +64,10 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git tag "${tag}" "${GITHUB_SHA}"
-          git push origin "refs/tags/${tag}"
+          git push "${remote}" "refs/tags/${tag}"
 
           git tag -f "v${major}" "${GITHUB_SHA}"
-          git push origin "refs/tags/v${major}" --force
+          git push "${remote}" "refs/tags/v${major}" --force
 
           gh release create "${tag}" --title "${tag}" --generate-notes --target "${GITHUB_SHA}"
 
@@ -77,10 +79,10 @@ jobs:
               console.error("package.json version field not found");
               process.exit(1);
             }
-            text = text.replace(/"version":\s*"\d+\.\d+\.\d+"/, `"version": "${next}"`);
+            text = text.replace(/"version":\s*"\d+\.\d+\.\d+"/, "\"version\": \"" + next + "\"");
             fs.writeFileSync("package.json", text);
           '
 
           git add package.json
           git commit -m "Bump version to ${next} for next release"
-          git push origin "HEAD:${DEFAULT_BRANCH}"
+          git push "${remote}" "HEAD:${DEFAULT_BRANCH}"
