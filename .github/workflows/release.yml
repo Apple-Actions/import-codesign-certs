@@ -1,0 +1,86 @@
+# Human-triggered release: tag package.json version, move major tag, GitHub
+# Release, then minor-bump package.json on the default branch for the next queue.
+#
+# Actions → Release → Run workflow (must select the default branch).
+name: Release
+
+run-name: Release ${{ github.ref_name }}
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Tag release and queue next minor
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+
+          if [ "${GITHUB_REF_NAME}" != "${DEFAULT_BRANCH}" ]; then
+            echo "::error::Release only from ${DEFAULT_BRANCH}, got ${GITHUB_REF_NAME}"
+            exit 1
+          fi
+
+          git fetch --tags origin
+
+          version="$(node -e '
+            const fs = require("node:fs");
+            const text = fs.readFileSync("package.json", "utf8");
+            const match = text.match(/"version":\s*"(\d+)\.(\d+)\.(\d+)"/);
+            if (!match) {
+              console.error("package.json version must be semver X.Y.Z");
+              process.exit(1);
+            }
+            process.stdout.write(`${match[1]}.${match[2]}.${match[3]}`);
+          ')"
+          tag="v${version}"
+          major="${version%%.*}"
+          minor_patch="${version#*.}"
+          minor="${minor_patch%%.*}"
+          next="${major}.$((minor + 1)).0"
+
+          if git rev-parse -q --verify "refs/tags/${tag}" >/dev/null; then
+            echo "::error::Tag ${tag} already exists"
+            exit 1
+          fi
+
+          echo "Releasing ${tag} at ${GITHUB_SHA}; next queue ${next}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git tag "${tag}" "${GITHUB_SHA}"
+          git push origin "refs/tags/${tag}"
+
+          git tag -f "v${major}" "${GITHUB_SHA}"
+          git push origin "refs/tags/v${major}" --force
+
+          gh release create "${tag}" --title "${tag}" --generate-notes --target "${GITHUB_SHA}"
+
+          NEXT="${next}" node -e '
+            const fs = require("node:fs");
+            const next = process.env.NEXT;
+            let text = fs.readFileSync("package.json", "utf8");
+            if (!/"version":\s*"\d+\.\d+\.\d+"/.test(text)) {
+              console.error("package.json version field not found");
+              process.exit(1);
+            }
+            text = text.replace(/"version":\s*"\d+\.\d+\.\d+"/, `"version": "${next}"`);
+            fs.writeFileSync("package.json", text);
+          '
+
+          git add package.json
+          git commit -m "Bump version to ${next} for next release"
+          git push origin "HEAD:${DEFAULT_BRANCH}"
