@@ -1,6 +1,7 @@
-# Merge every green Dependabot PR into main in one push.
-# Triggered when Dependabot CI finishes or when main moves; no schedule.
-# Write token is only on list/push steps; merge and yarn verify run without it.
+# Merge every green Dependabot PR into main after a local combined verify.
+# Lands via the PR merge API (keeps branch protection). Triggered when
+# Dependabot CI finishes or when main moves; no schedule.
+# Write token is only on list/merge steps; local merge and yarn verify run without it.
 name: dependabot-land
 
 run-name: dependabot-land
@@ -26,7 +27,7 @@ on:
 
 permissions:
   contents: write
-  pull-requests: read
+  pull-requests: write
 
 concurrency:
   group: dependabot-land
@@ -207,22 +208,23 @@ jobs:
           echo "Will land:"
           cat /tmp/dependabot-merged.tsv
 
-      - name: Push and delete branches
+      # Merge via the PR API so branch protection (required checks / reviews) stays
+      # satisfied. github-actions is on the classic bypass list for review requirements;
+      # each candidate already has green required checks.
+      - name: Merge PRs and delete branches
         if: steps.debounce.outputs.skip != 'true' && steps.list.outputs.empty != 'true' && env.empty != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
-          BASE: ${{ github.event.repository.default_branch }}
         run: |
           set -euo pipefail
           if [ ! -s /tmp/dependabot-merged.tsv ]; then
-            echo "Nothing to push."
+            echo "Nothing to merge."
             exit 0
           fi
-          remote="https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git"
-          git push "$remote" "HEAD:refs/heads/${BASE}"
-          while IFS=$'\t' read -r _ head _; do
-            git push --quiet "$remote" --delete "$head" || true
+          while IFS=$'\t' read -r num head _; do
+            gh pr merge "$num" --repo "$REPO" --merge --delete-branch
+            echo "Merged #$num ($head)."
           done < /tmp/dependabot-merged.tsv
 
           {
