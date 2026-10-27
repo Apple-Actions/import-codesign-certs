@@ -1,0 +1,240 @@
+# Merge every green Dependabot PR into main in one push.
+# Triggered when Dependabot CI finishes or when main moves; no schedule.
+# Write token is only on list/push steps; merge and yarn verify run without it.
+name: dependabot-land
+
+run-name: dependabot-land
+
+on:
+  # zizmor: ignore[dangerous-triggers] — token isolated to list/push; no PR checkout of untrusted code
+  workflow_run:
+    workflows:
+      - test
+      - eslint
+      - knip
+      - prettier
+      - Check dist/
+      - lint-workflows
+    types:
+      - completed
+    branches:
+      - "dependabot/**"
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: dependabot-land
+  cancel-in-progress: false
+
+jobs:
+  land:
+    name: land
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Debounce on CI completion events
+        id: debounce
+        if: github.event_name == 'workflow_run'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          # Land only when no Dependabot PR has a check that started in the last
+          # 30 minutes and is still running. The last CI run to finish lands the
+          # batch. Older stuck checks do not block.
+          cutoff=$(date -u -d '-30 minutes' +%Y-%m-%dT%H:%M:%SZ)
+          pending=$(gh pr list --repo "$REPO" --author "app/dependabot" --state open --limit 50 \
+            --json statusCheckRollup \
+            | jq --arg cutoff "$cutoff" '[.[].statusCheckRollup[]
+              | select((.conclusion // "")
+                  | IN("SUCCESS","NEUTRAL","SKIPPED","FAILURE","CANCELLED","TIMED_OUT","ACTION_REQUIRED","ERROR")
+                  | not)
+              | select((.startedAt // $cutoff) >= $cutoff)] | length')
+          if [ "$pending" -gt 0 ]; then
+            echo "$pending check(s) still running; a later event will land."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout
+        if: steps.debounce.outputs.skip != 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: List green Dependabot PRs
+        id: list
+        if: steps.debounce.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          # Candidates: open, non-draft, by Dependabot, at least one check,
+          # every check SUCCESS/NEUTRAL/SKIPPED. Skip github-actions bumps —
+          # github.token cannot push commits that touch .github/workflows/.
+          : > /tmp/dependabot-prs.tsv
+          : > /tmp/dependabot-skipped-actions.txt
+          while IFS=$'\t' read -r num head title; do
+            if [[ "$head" == dependabot/github_actions/* ]]; then
+              echo "$num" >> /tmp/dependabot-skipped-actions.txt
+              echo "Skipping #$num (Actions bump; needs a human or a workflow-scoped token)."
+              continue
+            fi
+            if gh pr view "$num" --repo "$REPO" --json files \
+              --jq 'any(.files[].path; startswith(".github/workflows/"))' | grep -qx true; then
+              echo "$num" >> /tmp/dependabot-skipped-actions.txt
+              echo "Skipping #$num (touches .github/workflows/)."
+              continue
+            fi
+            printf '%s\t%s\t%s\n' "$num" "$head" "$title" >> /tmp/dependabot-prs.tsv
+          done < <(
+            gh pr list --repo "$REPO" --author "app/dependabot" --state open --limit 50 \
+              --json number,headRefName,title,isDraft,statusCheckRollup \
+              --jq '.[] | select(.isDraft | not)
+                        | select((.statusCheckRollup | length) > 0)
+                        | select(all(.statusCheckRollup[];
+                            (.conclusion // .state) | IN("SUCCESS","NEUTRAL","SKIPPED")))
+                        | [.number, .headRefName, .title] | @tsv' \
+              | sort -n
+          )
+          if [ ! -s /tmp/dependabot-prs.tsv ]; then
+            echo "No green landable Dependabot PRs (npm-only)."
+            echo "empty=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Candidates:"
+            cat /tmp/dependabot-prs.tsv
+          fi
+          if [ -s /tmp/dependabot-skipped-actions.txt ]; then
+            echo "Skipped Actions / workflow PRs: $(tr '\n' ' ' < /tmp/dependabot-skipped-actions.txt)"
+          fi
+
+      - name: Enable corepack (workaround)
+        if: steps.debounce.outputs.skip != 'true' && steps.list.outputs.empty != 'true'
+        run: corepack enable
+
+      - name: Setup Node
+        if: steps.debounce.outputs.skip != 'true' && steps.list.outputs.empty != 'true'
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: package.json
+          cache: yarn
+
+      - name: Merge and verify
+        if: steps.debounce.outputs.skip != 'true' && steps.list.outputs.empty != 'true'
+        env:
+          REPO: ${{ github.repository }}
+          BASE: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          verify() {
+            yarn install --immutable
+            yarn format:check
+            yarn lint
+            yarn knip
+            yarn type:check
+            if grep -q '"test":' package.json; then yarn test; fi
+            yarn build
+            git diff --exit-code -- dist/
+          }
+
+          merge_one() {
+            local num="$1" head="$2" title="$3"
+            git fetch --quiet origin "$head"
+            git merge --no-ff --no-edit \
+              -m "Merge pull request #${num} from ${REPO%%/*}/${head}" \
+              -m "${title}" \
+              FETCH_HEAD
+          }
+
+          reset_to() {
+            git merge --abort 2>/dev/null || true
+            git reset --hard "$1"
+            git clean -fdx -e node_modules
+          }
+
+          start=$(git rev-parse HEAD)
+          : > /tmp/dependabot-merged.tsv
+          : > /tmp/dependabot-skipped.txt
+
+          while IFS=$'\t' read -r num head title; do
+            if merge_one "$num" "$head" "$title"; then
+              printf '%s\t%s\t%s\n' "$num" "$head" "$title" >> /tmp/dependabot-merged.tsv
+            else
+              reset_to HEAD
+              echo "$num" >> /tmp/dependabot-skipped.txt
+              echo "Skipped #$num (merge conflict)."
+            fi
+          done < /tmp/dependabot-prs.tsv
+
+          if [ ! -s /tmp/dependabot-merged.tsv ]; then
+            echo "Nothing merged cleanly."
+            echo "empty=true" >> "$GITHUB_ENV"
+            exit 0
+          fi
+
+          if ! verify; then
+            echo "Combined tree failed verification; landing incrementally."
+            cp /tmp/dependabot-merged.tsv /tmp/dependabot-first-pass.tsv
+            reset_to "$start"
+            : > /tmp/dependabot-merged.tsv
+            while IFS=$'\t' read -r num head title; do
+              before=$(git rev-parse HEAD)
+              if merge_one "$num" "$head" "$title" && verify; then
+                printf '%s\t%s\t%s\n' "$num" "$head" "$title" >> /tmp/dependabot-merged.tsv
+              else
+                reset_to "$before"
+                echo "$num" >> /tmp/dependabot-skipped.txt
+                echo "Skipped #$num (verify failed on top of previous landings)."
+              fi
+            done < /tmp/dependabot-first-pass.tsv
+
+            if [ ! -s /tmp/dependabot-merged.tsv ]; then
+              echo "::error::Every green PR fails when merged onto ${BASE}."
+              exit 1
+            fi
+          fi
+
+          echo "Will land:"
+          cat /tmp/dependabot-merged.tsv
+
+      - name: Push and delete branches
+        if: steps.debounce.outputs.skip != 'true' && steps.list.outputs.empty != 'true' && env.empty != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          BASE: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          if [ ! -s /tmp/dependabot-merged.tsv ]; then
+            echo "Nothing to push."
+            exit 0
+          fi
+          remote="https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git"
+          git push "$remote" "HEAD:refs/heads/${BASE}"
+          while IFS=$'\t' read -r _ head _; do
+            git push --quiet "$remote" --delete "$head" || true
+          done < /tmp/dependabot-merged.tsv
+
+          {
+            echo "## Landed"
+            while IFS=$'\t' read -r num _ _; do echo "- #${num}"; done < /tmp/dependabot-merged.tsv
+            if [ -s /tmp/dependabot-skipped.txt ]; then
+              echo "## Skipped (merge/verify)"
+              sort -nu /tmp/dependabot-skipped.txt | while read -r num; do echo "- #${num}"; done
+            fi
+            if [ -s /tmp/dependabot-skipped-actions.txt ]; then
+              echo "## Skipped (Actions / workflow files; needs a human)"
+              sort -nu /tmp/dependabot-skipped-actions.txt | while read -r num; do echo "- #${num}"; done
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
