@@ -1,5 +1,7 @@
 # Human-triggered release: tag package.json version, move major tag, GitHub
 # Release, then minor-bump package.json on the default branch for the next queue.
+# The bump lands via a short-lived release-queue/* branch so required status
+# checks attach to the commit before it is pushed to the protected default branch.
 #
 # Actions → Release → Run workflow (must select the default branch).
 name: Release
@@ -85,4 +87,65 @@ jobs:
 
           git add package.json
           git commit -m "Bump version to ${next} for next release"
-          git push "${remote}" "HEAD:${DEFAULT_BRANCH}"
+          bump_sha="$(git rev-parse HEAD)"
+          queue_branch="release-queue/${next}"
+
+          # Push to a temp branch so required status checks attach to bump_sha,
+          # then push that same SHA to main (protection rejects unchecked SHAs).
+          git push "${remote}" "HEAD:refs/heads/${queue_branch}"
+
+          required_checks="knip check-dist eslint prettier test actionlint zizmor"
+          deadline=$((SECONDS + 1800))
+          while true; do
+            if [ "${SECONDS}" -ge "${deadline}" ]; then
+              echo "::error::Timed out waiting for required checks on ${bump_sha}"
+              exit 1
+            fi
+
+            # One JSON object: check name -> latest conclusion ("" if still running).
+            status_json="$(
+              gh api "repos/${GITHUB_REPOSITORY}/commits/${bump_sha}/check-runs?per_page=100" \
+                --jq '
+                  [.check_runs[] | {name, conclusion, started_at}]
+                  | group_by(.name)
+                  | map(sort_by(.started_at) | last)
+                  | map({key: .name, value: (.conclusion // "")})
+                  | from_entries
+                '
+            )"
+
+            all_ok=true
+            for name in ${required_checks}; do
+              conclusion="$(
+                STATUS_JSON="${status_json}" NAME="${name}" node -e '
+                  const data = JSON.parse(process.env.STATUS_JSON);
+                  process.stdout.write(data[process.env.NAME] ?? "");
+                '
+              )"
+              if [ -z "${conclusion}" ]; then
+                echo "Waiting for check: ${name}"
+                all_ok=false
+                continue
+              fi
+              case "${conclusion}" in
+                success|neutral|skipped) ;;
+                failure|cancelled|timed_out|action_required|startup_failure|stale)
+                  echo "::error::Required check ${name} concluded ${conclusion}"
+                  exit 1
+                  ;;
+                *)
+                  echo "Check ${name} still ${conclusion}"
+                  all_ok=false
+                  ;;
+              esac
+            done
+
+            if [ "${all_ok}" = true ]; then
+              echo "All required checks passed on ${bump_sha}"
+              break
+            fi
+            sleep 15
+          done
+
+          git push "${remote}" "${bump_sha}:refs/heads/${DEFAULT_BRANCH}"
+          git push "${remote}" --delete "refs/heads/${queue_branch}"
