@@ -2,6 +2,8 @@
 # Release, then minor-bump package.json on the default branch for the next queue.
 # The bump lands via a short-lived release-queue/* branch so required status
 # checks attach to the commit before it is pushed to the protected default branch.
+# Push with DEPENDABOT_DIST_TOKEN (not github.token): GITHUB_TOKEN pushes do not
+# trigger on: push workflows, so required checks would never appear.
 #
 # Actions → Release → Run workflow (must select the default branch).
 name: Release
@@ -26,10 +28,15 @@ jobs:
 
       - name: Tag release and queue next minor
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.DEPENDABOT_DIST_TOKEN }}
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
           set -euo pipefail
+
+          if [ -z "${GH_TOKEN}" ]; then
+            echo "::error::DEPENDABOT_DIST_TOKEN secret is missing; cannot push release-queue or tags."
+            exit 1
+          fi
 
           if [ "${GITHUB_REF_NAME}" != "${DEFAULT_BRANCH}" ]; then
             echo "::error::Release only from ${DEFAULT_BRANCH}, got ${GITHUB_REF_NAME}"
