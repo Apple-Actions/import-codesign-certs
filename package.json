@@ -1,6 +1,6 @@
 {
   "name": "import-codesign-certs",
-  "version": "7.2.0",
+  "version": "7.3.0",
   "description": "GitHub Action for Importing Code-signing Certificates into a Keychain",
   "type": "module",
   "main": "src/main.ts",
