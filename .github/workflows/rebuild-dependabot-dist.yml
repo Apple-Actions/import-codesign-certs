@@ -1,0 +1,85 @@
+# Dependabot only updates package.json / the lockfile. For this Action the
+# production bundle lives in dist/, so npm bumps fail check-dist until dist/ is
+# rebuilt. Push the rebuild with DEPENDABOT_DIST_TOKEN (fine-grained PAT) so
+# on: push CI re-fires and branch protection / dependabot-land can merge.
+name: Rebuild Dependabot dist
+
+run-name: Rebuild Dependabot dist
+
+on:
+  push:
+    branches:
+      - "dependabot/npm**"
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Dependabot branch to rebuild (e.g. dependabot/npm_and_yarn/…)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rebuild-dependabot-dist-${{ github.event.inputs.branch || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rebuild:
+    name: rebuild
+    if: >
+      (github.event_name == 'push' &&
+        github.event.sender.login == 'dependabot[bot]') ||
+      (github.event_name == 'workflow_dispatch' &&
+        startsWith(inputs.branch, 'dependabot/npm'))
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.branch || github.ref_name }}
+          persist-credentials: false
+
+      - name: Enable corepack (workaround)
+        run: corepack enable
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: package.json
+          cache: yarn
+
+      # Freshly bumped deps are untrusted; skip their lifecycle scripts.
+      - name: Install dependencies
+        run: yarn install --immutable
+        env:
+          YARN_ENABLE_SCRIPTS: "false"
+
+      - name: Rebuild dist/
+        run: yarn build
+
+      - name: Commit dist/ if changed
+        id: commit
+        env:
+          BRANCH: ${{ inputs.branch || github.ref_name }}
+          GH_TOKEN: ${{ secrets.DEPENDABOT_DIST_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          if [ "$(git diff --ignore-space-at-eol dist/ | wc -l)" -eq 0 ]; then
+            echo "dist/ already up to date."
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ -z "${GH_TOKEN}" ]; then
+            echo "::error::DEPENDABOT_DIST_TOKEN secret is missing; cannot push rebuilt dist/."
+            exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dist/
+          git commit -m "[dependabot skip] Rebuild dist/ for dependency bump"
+          remote="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push "${remote}" "HEAD:refs/heads/${BRANCH}"
+          echo "committed=true" >> "$GITHUB_OUTPUT"
