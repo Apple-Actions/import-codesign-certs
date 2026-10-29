@@ -199,7 +199,11 @@ jobs:
       - name: Merge PRs and delete branches
         if: steps.debounce.outputs.skip != 'true' && steps.list.outputs.empty != 'true' && env.empty != 'true'
         env:
-          GH_TOKEN: ${{ secrets.DEPENDABOT_DIST_TOKEN }}
+          # Approve with GITHUB_TOKEN (PATs often lack pull-request review).
+          # Merge with DEPENDABOT_DIST_TOKEN (needs Workflows write for
+          # workflow-file PRs; github.token cannot do that).
+          APPROVE_TOKEN: ${{ github.token }}
+          MERGE_TOKEN: ${{ secrets.DEPENDABOT_DIST_TOKEN }}
           REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
@@ -207,13 +211,13 @@ jobs:
             echo "Nothing to merge."
             exit 0
           fi
-          if [ -z "${GH_TOKEN}" ]; then
+          if [ -z "${MERGE_TOKEN}" ]; then
             echo "::error::DEPENDABOT_DIST_TOKEN secret is missing; cannot merge PRs that update workflows."
             exit 1
           fi
           while IFS=$'\t' read -r num head _; do
-            gh pr review "$num" --repo "$REPO" --approve || true
-            gh pr merge "$num" --repo "$REPO" --merge --delete-branch
+            GH_TOKEN="$APPROVE_TOKEN" gh pr review "$num" --repo "$REPO" --approve || true
+            GH_TOKEN="$MERGE_TOKEN" gh pr merge "$num" --repo "$REPO" --merge --delete-branch
             echo "Merged #$num ($head)."
           done < /tmp/dependabot-merged.tsv
 
