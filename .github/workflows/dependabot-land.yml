@@ -79,22 +79,10 @@ jobs:
         run: |
           set -euo pipefail
           # Candidates: open, non-draft, by Dependabot, at least one check,
-          # every check SUCCESS/NEUTRAL/SKIPPED. Skip github-actions bumps —
-          # github.token cannot push commits that touch .github/workflows/.
+          # every check SUCCESS/NEUTRAL/SKIPPED. Includes Actions/workflow bumps
+          # (landed via gh pr merge, not a GITHUB_TOKEN push of workflow files).
           : > /tmp/dependabot-prs.tsv
-          : > /tmp/dependabot-skipped-actions.txt
           while IFS=$'\t' read -r num head title; do
-            if [[ "$head" == dependabot/github_actions/* ]]; then
-              echo "$num" >> /tmp/dependabot-skipped-actions.txt
-              echo "Skipping #$num (Actions bump; needs a human or a workflow-scoped token)."
-              continue
-            fi
-            if gh pr view "$num" --repo "$REPO" --json files \
-              --jq 'any(.files[].path; startswith(".github/workflows/"))' | grep -qx true; then
-              echo "$num" >> /tmp/dependabot-skipped-actions.txt
-              echo "Skipping #$num (touches .github/workflows/)."
-              continue
-            fi
             printf '%s\t%s\t%s\n' "$num" "$head" "$title" >> /tmp/dependabot-prs.tsv
           done < <(
             gh pr list --repo "$REPO" --author "app/dependabot" --state open --limit 50 \
@@ -107,14 +95,11 @@ jobs:
               | sort -n
           )
           if [ ! -s /tmp/dependabot-prs.tsv ]; then
-            echo "No green landable Dependabot PRs (npm-only)."
+            echo "No green landable Dependabot PRs."
             echo "empty=true" >> "$GITHUB_OUTPUT"
           else
             echo "Candidates:"
             cat /tmp/dependabot-prs.tsv
-          fi
-          if [ -s /tmp/dependabot-skipped-actions.txt ]; then
-            echo "Skipped Actions / workflow PRs: $(tr '\n' ' ' < /tmp/dependabot-skipped-actions.txt)"
           fi
 
       - name: Enable corepack (workaround)
@@ -233,9 +218,5 @@ jobs:
             if [ -s /tmp/dependabot-skipped.txt ]; then
               echo "## Skipped (merge/verify)"
               sort -nu /tmp/dependabot-skipped.txt | while read -r num; do echo "- #${num}"; done
-            fi
-            if [ -s /tmp/dependabot-skipped-actions.txt ]; then
-              echo "## Skipped (Actions / workflow files; needs a human)"
-              sort -nu /tmp/dependabot-skipped-actions.txt | while read -r num; do echo "- #${num}"; done
             fi
           } >> "$GITHUB_STEP_SUMMARY"
