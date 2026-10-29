@@ -194,17 +194,22 @@ jobs:
           cat /tmp/dependabot-merged.tsv
 
       # Merge via the PR API. Approve first so required-review protection is
-      # satisfied (Actions may approve PRs); each candidate already has green checks.
+      # satisfied. Use DEPENDABOT_DIST_TOKEN (fine-grained PAT with Workflows
+      # write): github.token cannot merge PRs that update workflow files.
       - name: Merge PRs and delete branches
         if: steps.debounce.outputs.skip != 'true' && steps.list.outputs.empty != 'true' && env.empty != 'true'
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.DEPENDABOT_DIST_TOKEN }}
           REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
           if [ ! -s /tmp/dependabot-merged.tsv ]; then
             echo "Nothing to merge."
             exit 0
+          fi
+          if [ -z "${GH_TOKEN}" ]; then
+            echo "::error::DEPENDABOT_DIST_TOKEN secret is missing; cannot merge PRs that update workflows."
+            exit 1
           fi
           while IFS=$'\t' read -r num head _; do
             gh pr review "$num" --repo "$REPO" --approve || true
