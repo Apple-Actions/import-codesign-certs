@@ -951,7 +951,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:~24.19.1":
+"@types/node@npm:~24.19.2":
   version: 24.19.2
   resolution: "@types/node@npm:24.19.2"
   dependencies:
@@ -2699,7 +2699,7 @@ __metadata:
   dependencies:
     "@actions/core": "npm:~3.0.0"
     "@actions/exec": "npm:~3.0.0"
-    "@types/node": "npm:~24.19.1"
+    "@types/node": "npm:~24.19.2"
     "@types/tmp": "npm:~0.2.0"
     esbuild: "npm:~0.28.2"
     eslint: "npm:~10.13.0"

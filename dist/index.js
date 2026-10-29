@@ -20767,7 +20767,7 @@ function getState(name) {
 }
 
 // src/main.ts
-var import_tmp = __toESM(require_tmp());
+var import_tmp = __toESM(require_tmp(), 1);
 import { writeFileSync } from "fs";
 import { platform as platform2 } from "os";
 
