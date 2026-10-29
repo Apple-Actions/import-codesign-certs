@@ -2,6 +2,7 @@
   "name": "import-codesign-certs",
   "version": "7.2.0",
   "description": "GitHub Action for Importing Code-signing Certificates into a Keychain",
+  "type": "module",
   "main": "src/main.ts",
   "engines": {
     "node": "24"
@@ -34,7 +35,7 @@
     "tmp": "~0.2.0"
   },
   "devDependencies": {
-    "@types/node": "~24.19.1",
+    "@types/node": "~24.19.2",
     "@types/tmp": "~0.2.0",
     "esbuild": "~0.28.2",
     "eslint": "~10.13.0",
@@ -45,5 +46,5 @@
     "vite": "~8.3.3",
     "vitest": "~5.0.5"
   },
-  "packageManager": "yarn@4.17.1"
+  "packageManager": "yarn@4.18.0"
 }
